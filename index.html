@@ -1144,6 +1144,29 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 @media(max-width:600px){.cal-sidebar{display:none}.cal-main{padding:16px 10px}.cal-heading{font-size:23px}.cal-controls button{padding:6px 9px}.cal-day{padding:5px 2px}.cal-grid{grid-auto-rows:minmax(52px,1fr)}}
 </style>
 <style id="v160-author-visible">#trueEndingMenu .te-menu-author{display:block;color:#49345e;font-size:18px;font-weight:600;text-indent:0;margin:24px 0 28px}</style>
+<style id="jt-single-mail-reader">
+/* Keep the original radio state and mailview scroller used by story triggers. */
+#mailWindow .mailgrid{grid-template-columns:205px minmax(0,1fr);flex:1;min-height:0;height:auto;overflow:hidden}
+#mailWindow .mails{border-right:0;min-width:0}
+#mailWindow .mailview{display:none;position:relative;inset:auto;min-width:0;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}
+#mailWindow .mailpage{width:100%;max-width:900px;margin:0 auto;padding:24px 32px 56px}
+#mailWindow .mailpage>.back{display:none}
+#mailWindow .rightact{height:100%;display:flex;align-items:center;justify-content:flex-end}
+#mailWindow .mail-reader-back{display:none;align-items:center;justify-content:center;min-height:44px;margin:0;padding:0 6px;white-space:nowrap;font-size:13px;color:#0b67d8;cursor:pointer;touch-action:manipulation}
+#mailWindow .mail-reader-back:focus-visible{outline:2px solid #2674df;outline-offset:-3px;border-radius:6px}
+#mailWindow .tc-pages-only{max-width:760px;margin:12px auto 0;gap:22px}
+#mailWindow .tc-pages-only img{height:auto;object-fit:contain}
+#mailWindow .mail-attachment{max-width:760px;margin:22px auto 0}
+#mailWindow .mail-attachment img{max-width:100%}
+input[name="mail"]:not(#mail-default):checked~.desktop #mailWindow .mailgrid{grid-template-columns:minmax(0,1fr)}
+input[name="mail"]:not(#mail-default):checked~.desktop #mailWindow .sidebar,
+input[name="mail"]:not(#mail-default):checked~.desktop #mailWindow .mails{display:none}
+input[name="mail"]:not(#mail-default):checked~.desktop #mailWindow .mailview{display:block;grid-column:1;grid-row:1}
+input[name="mail"]:not(#mail-default):checked~.desktop #mailWindow .mail-reader-back{display:flex}
+#mail-default:checked~.desktop #mailWindow .mailview{display:none}
+@media(max-width:820px){#mailWindow .mailgrid{grid-template-columns:155px minmax(0,1fr)}#mailWindow .mailpage{padding:22px 24px 48px}}
+@media(max-width:580px){#mailWindow .mailgrid{grid-template-columns:minmax(0,1fr)}#mailWindow .mailpage{padding:18px 16px 40px}#mailWindow .tc-pages-only{gap:14px}#mailWindow .meta{overflow-wrap:anywhere}}
+</style>
 </head>
 <body>
 <section class="game-opening-page is-visible" id="gameOpeningPage" aria-label="京田市谜案调查开场">
@@ -1195,7 +1218,7 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 <div class="dock"><label for="app-mail"><span class="tile mailtile">✉</span></label><label for="app-browser"><span class="tile safaritile">◉</span></label><label for="app-wechat"><span class="tile wechattile">••</span></label></div>
 <section class="window" id="calendarWindow"><div class="titlebar"><div class="traffic"><label aria-label="关闭日历" class="dot red closer" for="app-none"></label><span class="dot yellow"></span><span class="dot green"></span></div><div class="wtitle">日历</div><div></div></div><div class="game-calendar"></div></section>
 <section class="window" id="mailWindow">
-<div class="titlebar"><div class="traffic"><label class="dot red closer" for="app-none"></label><span class="dot yellow"></span><span class="dot green"></span></div><div class="wtitle">邮箱</div><div class="rightact">⌕　↻</div></div>
+<div class="titlebar"><div class="traffic"><label class="dot red closer" for="app-none"></label><span class="dot yellow"></span><span class="dot green"></span></div><div class="wtitle">邮箱</div><div class="rightact"><label class="back mail-reader-back" for="mail-default" role="button" tabindex="0" aria-label="返回收件箱">‹ 收件箱</label></div></div>
 <div class="mailgrid">
 <aside class="sidebar"><div class="owner"><div class="avatar">罗</div><div><div class="oname">罗鑫</div><div class="oemail">luoxin0812@mail.com</div></div></div><div class="folder sel"><span>收件箱</span><b id="inboxCount">3</b></div><div class="folder">已加星标</div><div class="folder">已发送</div><div class="folder">草稿箱</div><div class="folder">废纸篓</div></aside>
 <div class="mails"><div class="listhead" id="inboxHead">收件箱 · 3 封邮件</div>
@@ -3009,7 +3032,7 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 <div class="jga-brand"><div class="jga-badge"></div><div class="jga-brandcopy"><h1>京田市公安局</h1><p>JINGTIAN PUBLIC SECURITY BUREAU</p></div></div>
 <div class="jga-headright"><div class="jga-motto">对党忠诚　服务人民<br/>执法公正　纪律严明</div><form action="#jgaHome" class="jga-topsearch" method="get"><select aria-label="搜索范围"><option>本网站</option><option>站内资讯</option></select><input aria-label="站内搜索" placeholder="请输入关键字查询" type="search"/><button type="submit">搜索</button></form></div>
 </div><nav class="jga-nav"><div class="jga-navin"><a href="#jgaHome">主页</a><a href="#jgaInfo">信息发布</a><a href="#jgaOpen">警务公开</a><a class="active" href="#jgaMy">我的</a></div></nav></header>
-<main class="jga-login-hero"><div class="jga-login-bgword"><b>立警为公</b><b>执法为民</b><span>建设更高水平的平安京田</span></div><div class="jga-login-stage"><section class="jga-loginbox"><div class="jga-login-title"><span class="jga-login-icon">●</span><h2>用户登录</h2></div><div class="jga-login-tabs"><b>账号登录</b><span>扫码登录</span></div><form action="#jgaYangPortal" autocomplete="off" method="get"><label>账号</label><input pattern="yang\.zh@jingtian-police\.gov" placeholder="请输入账号" required="" title="账号或密码错误" type="email"/><label>密码</label><input pattern="yzh010001" placeholder="请输入密码" required="" title="账号或密码错误" type="password"/><button type="submit">登 录</button></form><details class="jga-forgot-inline">
+<main class="jga-login-hero"><div class="jga-login-stage"><section class="jga-loginbox"><div class="jga-login-title"><span class="jga-login-icon">●</span><h2>用户登录</h2></div><div class="jga-login-tabs"><b>账号登录</b><span>扫码登录</span></div><form action="#jgaYangPortal" autocomplete="off" method="get"><label>账号</label><input pattern="yang\.zh@jingtian-police\.gov" placeholder="请输入账号" required="" title="账号或密码错误" type="email"/><label>密码</label><input pattern="yzh010001" placeholder="请输入密码" required="" title="账号或密码错误" type="password"/><button type="submit">登 录</button></form><details class="jga-forgot-inline">
 <summary>忘记密码？</summary>
 <div aria-label="密码密钥提示" class="jga-forgot-inline-panel">
 <table aria-label="三乘三密钥方阵" class="jga-key-matrix">
@@ -4197,7 +4220,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     dismissedThisOpen=false;
     if(armTimer) clearTimeout(armTimer);
     armTimer=setTimeout(function(){
-      if(threatMailIsOpen()){ showChoice(true); }
+      if(threatMailIsOpen()){ showChoice(); }
     },140);
   }
   function watchOpen(){
@@ -4205,11 +4228,11 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     else hideChoice();
   }
 
-  if(threatRadio){ threatRadio.addEventListener('change',function(){ if(this.checked){dismissedThisOpen=false;setTimeout(function(){showChoice(true);},80);}else hideChoice(); },false); }
+  if(threatRadio){ threatRadio.addEventListener('change',function(){ if(this.checked){dismissedThisOpen=false;setTimeout(function(){showChoice();},80);}else hideChoice(); },false); }
   if(threatItem){ threatItem.addEventListener('click',openTriggerDelay,false); }
   document.querySelectorAll('label[for="mail-yang-threat"]').forEach(function(el){ el.addEventListener('click',openTriggerDelay,false); });
-  if(toastNotice){ toastNotice.addEventListener('click',function(){ dismissedThisOpen=false;setTimeout(function(){showChoice(true);},180); },false); }
-  window.addEventListener('jt:yang-threat-mail-opened',function(){ dismissedThisOpen=false;setTimeout(function(){showChoice(true);},60); },false);
+  if(toastNotice){ toastNotice.addEventListener('click',function(){ dismissedThisOpen=false;setTimeout(function(){showChoice();},180); },false); }
+  window.addEventListener('jt:yang-threat-mail-opened',function(){ dismissedThisOpen=false;setTimeout(function(){showChoice();},60); },false);
   if(yesBtn){ yesBtn.addEventListener('click',showBadEnding,false); }
   if(noBtn){ noBtn.addEventListener('click',function(){ dismissedThisOpen=true;hideChoice(); },false); }
   if(closeBtn){ closeBtn.addEventListener('click',function(){ dismissedThisOpen=true;hideChoice(); },false); }
@@ -5175,4 +5198,24 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   update();
 })();
 </script>
+<script id="jt-single-mail-reader-events">
+(function(){
+  var view=document.querySelector('#mailWindow .mailview');
+  document.querySelectorAll('input[name="mail"]').forEach(function(radio){
+    radio.addEventListener('change',function(){if(this.checked&&view)view.scrollTop=0;},false);
+  });
+  var back=document.querySelector('#mailWindow .mail-reader-back');
+  if(back)back.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();back.click();}
+  },false);
+})();
+</script>
+
+<style id="v171-choice-tap-targets">
+/* Native click handlers remain the only activation path; touch taps and
+   keyboard activation therefore cannot double-fire a story decision. */
+#yangChoiceToast .yang-choice-actions button{min-height:44px}
+#yangChoiceCloseBtn{min-width:44px;min-height:44px;flex:0 0 44px;display:grid;place-items:center;margin:-6px -6px 0 0;padding:0}
+#yangChoiceToast button:focus-visible,#badEndingScreen button:focus-visible{outline:3px solid #2674df;outline-offset:-3px}
+</style>
 </body></html>
