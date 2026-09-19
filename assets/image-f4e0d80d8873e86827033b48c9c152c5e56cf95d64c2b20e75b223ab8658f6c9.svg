@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#1b406f"/><stop offset="1" stop-color="#0a233f"/></linearGradient></defs>
+<rect width="1200" height="700" fill="url(#g)"/>
+<text x="90" y="132" font-size="54" font-family="Arial" fill="#eef5ff" font-weight="700">暑期算法训练营</text>
+<text x="92" y="184" font-size="28" font-family="Arial" fill="#b7cae1">基础算法 · 数据结构 · 项目实践</text>
+<g fill="#dce7f5">
+<rect x="140" y="315" width="210" height="130" rx="16"/><rect x="160" y="335" width="170" height="90" rx="8" fill="#90b6de"/>
+<rect x="425" y="315" width="210" height="130" rx="16"/><rect x="445" y="335" width="170" height="90" rx="8" fill="#90b6de"/>
+<rect x="710" y="315" width="210" height="130" rx="16"/><rect x="730" y="335" width="170" height="90" rx="8" fill="#90b6de"/>
+</g>
+<g fill="#eef5ff">
+<circle cx="205" cy="510" r="32"/><rect x="178" y="543" width="54" height="72" rx="18"/>
+<circle cx="490" cy="510" r="32"/><rect x="463" y="543" width="54" height="72" rx="18"/>
+<circle cx="775" cy="510" r="32"/><rect x="748" y="543" width="54" height="72" rx="18"/>
+</g>
+<text x="1040" y="400" text-anchor="middle" font-size="110" font-family="Arial" fill="#edf4ff" font-weight="700">&lt;/&gt;</text>
+</svg>

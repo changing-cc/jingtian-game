@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620">
+<rect width="900" height="620" fill="#f4f4f4"/>
+<ellipse cx="450" cy="510" rx="270" ry="50" fill="#dfe1e3"/>
+<g>
+<rect x="455" y="264" width="138" height="85" rx="4" fill="#4c2d22" transform="rotate(-10 455 264)"/>
+<path d="M468 281h112" stroke="#5a3629" stroke-width="4"/><path d="M463 301h112" stroke="#5a3629" stroke-width="4"/><path d="M458 321h112" stroke="#5a3629" stroke-width="4"/>
+<rect x="586" y="298" width="158" height="92" rx="5" fill="#45271d" transform="rotate(-12 586 298)"/>
+<path d="M613 312v66M634 308v68M655 304v69M676 299v72M697 294v74" stroke="#6a4335" stroke-width="5"/>
+<rect x="302" y="278" width="92" height="70" rx="4" fill="#533025" transform="rotate(15 302 278)"/>
+<rect x="396" y="238" width="102" height="72" rx="4" fill="#5a3528" transform="rotate(-15 396 238)"/>
+</g>
+<g>
+<circle cx="258" cy="410" r="63" fill="#c18a46"/>
+<path d="M224 390c24-33 72-35 101-6 24 24 20 63-9 91-30-3-58-16-77-37-22-24-26-34-15-48z" fill="#f2dcb4"/>
+<ellipse cx="262" cy="411" rx="31" ry="42" fill="#6d402a"/>
+<circle cx="382" cy="383" r="46" fill="#c98b41"/>
+<ellipse cx="379" cy="388" rx="39" ry="39" fill="#bf8340"/>
+<path d="M355 366c12-14 41-19 63-5-16 3-29 11-40 27-8 11-13 23-13 23-12-15-18-29-10-45z" fill="#d89b52"/>
+<circle cx="518" cy="423" r="58" fill="#c48a47"/>
+<path d="M492 387c31-14 66 5 88 37-18 16-41 21-64 18-24-4-39-13-49-29 1-14 7-20 25-26z" fill="#e9d3ad"/>
+<circle cx="308" cy="314" r="28" fill="#b57d3d"/><circle cx="628" cy="268" r="32" fill="#b9803f"/><circle cx="544" cy="285" r="25" fill="#ba803e"/>
+<ellipse cx="304" cy="315" rx="20" ry="20" fill="#6d402a"/><ellipse cx="628" cy="268" rx="22" ry="23" fill="#6c3f29"/><ellipse cx="544" cy="286" rx="18" ry="19" fill="#6d402a"/>
+</g>
+<g fill="#7bb238">
+<path d="M568 468c20-33 52-53 92-60-17 33-32 75-59 94-20 15-38 17-53 11 6-17 9-30 20-45z"/>
+<path d="M464 486c-1-35 13-68 42-95 8 36 27 79 17 111-7 25-20 37-37 43-11-15-18-28-22-59z"/>
+<path d="M620 466c6-20 18-38 40-54 4 28 15 54 7 75-6 17-15 29-29 35-13-8-18-24-18-56z"/>
+</g>
+<rect x="18" y="566" width="177" height="34" rx="4" fill="#e7e7e7"/>
+<text x="28" y="588" font-size="22" font-family="Arial" fill="#a0a0a0">图片来源：视觉中国</text>
+</svg>

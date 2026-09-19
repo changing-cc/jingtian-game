@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#183b68"/><stop offset="1" stop-color="#0c2544"/></linearGradient></defs>
+<rect width="1200" height="700" fill="url(#g)"/>
+<rect x="70" y="92" width="1060" height="90" rx="20" fill="#ffffff14"/>
+<text x="100" y="148" font-size="54" font-family="Arial" fill="#eaf3ff" font-weight="700">2020 京田市青少年编程大赛</text>
+<text x="103" y="210" font-size="28" font-family="Arial" fill="#adc4df">总决赛入围名单公布 · 24名选手入围</text>
+<g fill="#dfe9f5">
+<circle cx="170" cy="430" r="34"/><rect x="140" y="465" width="60" height="92" rx="22"/>
+<circle cx="290" cy="430" r="34"/><rect x="260" y="465" width="60" height="92" rx="22"/>
+<circle cx="410" cy="430" r="34"/><rect x="380" y="465" width="60" height="92" rx="22"/>
+<circle cx="530" cy="430" r="34"/><rect x="500" y="465" width="60" height="92" rx="22"/>
+<circle cx="650" cy="430" r="34"/><rect x="620" y="465" width="60" height="92" rx="22"/>
+<circle cx="770" cy="430" r="34"/><rect x="740" y="465" width="60" height="92" rx="22"/>
+<circle cx="890" cy="430" r="34"/><rect x="860" y="465" width="60" height="92" rx="22"/>
+</g>
+<rect x="950" y="310" width="150" height="210" rx="28" fill="#1b4b85"/>
+<text x="1025" y="400" text-anchor="middle" font-size="100" font-family="Arial" fill="#f2f7fd" font-weight="700">24</text>
+<text x="1025" y="447" text-anchor="middle" font-size="28" font-family="Arial" fill="#c5d7ea">FINALISTS</text>
+</svg>
