@@ -1187,6 +1187,7 @@ label[data-jt-nav]{align-items:center;justify-content:center;line-height:44px;pa
 .lts-file-docbar{height:48px;min-height:48px}
 .lts-file-docwin>.lts-file-paper{height:calc(100% - 48px)}
 .lts-note-back[data-jt-nav]{display:inline-flex;white-space:nowrap}
+.lts-lockcancel[data-jt-nav]{display:inline-flex;vertical-align:middle}
 .convback[data-jt-nav]{font-size:24px;text-align:center}
 .hz-engine-headline{grid-template-columns:44px minmax(0,1fr) 22px}
 .mudan-v2-util{height:auto;min-height:44px}
@@ -1733,8 +1734,8 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 </section>
 <section class="lts-appwindow" id="ltsGenericCalendar"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">日历</div><div></div></div><div class="game-calendar"></div></section>
 <section class="lts-appwindow" id="ltsGenericSettings"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">系统设置</div><div></div></div><div class="lts-generic"><div><b>系统设置</b><span>本地账户：lts1012@mail.com</span></div></div></section>
-<section class="lts-appwindow" id="ltsFilesLock"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">文件</div><div></div></div><div class="lts-native-lock"><div class="lts-lockcard"><div class="lts-lockglyph">🔒</div><h3>“文件”需要密码</h3><p>此文件夹已加密。</p><form action="#ltsFilesUnlocked" autocomplete="off" class="lts-lockform" method="get"><input inputmode="numeric" maxlength="8" name="folder_password" pattern="20210501" placeholder="输入密码" required="" title="密码不正确" type="password"/><button type="submit">→</button></form><div class="lts-password-hint" style="font-size:12px;line-height:1.6;color:#6b7280;margin-top:9px;text-align:center">我在准备的那件事是哪一天？</div><div class="lts-lockerror">密码错误时 Safari 会阻止打开。</div><label class="lts-lockcancel" for="lts-app-none">取消</label></div></div></section>
-<section class="lts-appwindow" id="ltsPhotosLock"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">相册</div><div></div></div><div class="lts-native-lock"><div class="lts-lockcard"><div class="lts-lockglyph">🔒</div><h3>“相册”需要密码</h3><p>此照片图库已加密。</p><form action="#ltsAlbumGallery" autocomplete="off" class="lts-lockform" method="get"><input aria-label="相册密码" inputmode="numeric" maxlength="4" name="album_password" pattern="1201" placeholder="输入密码" required="" title="密码不正确" type="password"/><button type="submit">→</button></form><div class="lts-password-hint" style="font-size:12px;line-height:1.6;color:#6b7280;margin-top:9px;text-align:center">birthday 4 digits</div><div class="lts-lockerror">密码错误时 Safari 会阻止打开。</div><label class="lts-lockcancel" for="lts-app-none">取消</label></div></div></section>
+<section class="lts-appwindow" id="ltsFilesLock"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">文件</div><div></div></div><div class="lts-native-lock"><div class="lts-lockcard"><div class="lts-lockglyph">🔒</div><h3>“文件”需要密码</h3><p>此文件夹已加密。</p><form action="#ltsFilesUnlocked" autocomplete="off" class="lts-lockform" method="get"><input inputmode="numeric" maxlength="8" name="folder_password" pattern="20210501" placeholder="输入密码" required="" title="密码不正确" type="password"/><button type="submit">→</button></form><div class="lts-password-hint" style="font-size:12px;line-height:1.6;color:#6b7280;margin-top:9px;text-align:center">我在准备的那件事是哪一天？</div><div class="lts-lockerror">密码错误时 Safari 会阻止打开。</div><label class="lts-lockcancel" for="lts-app-none" data-jt-nav="close" role="button" tabindex="0" aria-label="取消并关闭密码窗口">取消</label></div></div></section>
+<section class="lts-appwindow" id="ltsPhotosLock"><div class="lts-windowbar"><div class="lts-wtraffic"><label class="lts-wdot-label red" for="lts-app-none" data-jt-nav="close" data-jt-dot="1" role="button" tabindex="0" aria-label="关闭窗口"></label><span class="lts-wdot lts-wyellow"></span><span class="lts-wdot lts-wgreen"></span></div><div class="lts-wtitle">相册</div><div></div></div><div class="lts-native-lock"><div class="lts-lockcard"><div class="lts-lockglyph">🔒</div><h3>“相册”需要密码</h3><p>此照片图库已加密。</p><form action="#ltsAlbumGallery" autocomplete="off" class="lts-lockform" method="get"><input aria-label="相册密码" inputmode="numeric" maxlength="4" name="album_password" pattern="1201" placeholder="输入密码" required="" title="密码不正确" type="password"/><button type="submit">→</button></form><div class="lts-password-hint" style="font-size:12px;line-height:1.6;color:#6b7280;margin-top:9px;text-align:center">birthday 4 digits</div><div class="lts-lockerror">密码错误时 Safari 会阻止打开。</div><label class="lts-lockcancel" for="lts-app-none" data-jt-nav="close" role="button" tabindex="0" aria-label="取消并关闭密码窗口">取消</label></div></div></section>
 </div>
 <section aria-label="陆添时相册" id="ltsAlbumGallery">
 <div class="lts-album-bg"></div>
@@ -4727,7 +4728,12 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   function success(){
     if(msg){msg.textContent='举报成功';msg.className='jtgov-submitmsg ok';}
     if(submit){submit.disabled=true;submit.textContent='已提交';}
-    timer=setTimeout(function(){location.hash='trueEndingPending';},3000);
+    if(timer){clearTimeout(timer);}
+    timer=setTimeout(function(){
+      timer=null;
+      /* A later Back action takes precedence over this pending transition. */
+      if(location.hash==='#jtgovReportForm')location.hash='trueEndingPending';
+    },3000);
   }
   if(openBtn)openBtn.addEventListener('click',function(){resetReportForm();location.hash='jtgovReportForm';},false);
   if(form){
@@ -4744,6 +4750,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
   window.addEventListener('hashchange',function(){
     if(location.hash==='#jtgovReportForm')resetReportForm();
+    else if(timer){clearTimeout(timer);timer=null;}
   },false);
   resetReportForm();
 })();
