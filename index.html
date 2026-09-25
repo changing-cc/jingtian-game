@@ -1200,6 +1200,16 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 @media(max-width:580px){.convback[data-jt-nav]{display:inline-flex}}
 @media(max-width:560px){.lts-apps{top:100px}}
 </style>
+<script id="jt-device-profile-v173">
+/* Device family selects comfortable defaults; CSS viewport rules still handle
+   split view, rotation, window resizing and the player's own browser zoom. */
+(function(){
+  var ua=navigator.userAgent||'';
+  var ipad=/iPad/i.test(ua)||(/Mac/i.test(navigator.platform||'')&&navigator.maxTouchPoints>1);
+  var tablet=ipad||(/Android/i.test(ua)&&!/Mobile/i.test(ua));
+  document.documentElement.setAttribute('data-jt-device',tablet?'tablet':/iPhone|iPod|Android.*Mobile/i.test(ua)?'phone':'desktop');
+})();
+</script>
 </head>
 <body>
 <section class="game-opening-page is-visible" id="gameOpeningPage" aria-label="京田市谜案调查开场">
@@ -5291,4 +5301,101 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   },false);
 })();
 </script>
+<style id="jt-adaptive-layout-v173">
+/* Size actual layout boxes, never scale the page or its pointer coordinates. */
+:root{
+  --jt-icon:clamp(64px,5.35vw,82px);
+  --jt-dock-icon:clamp(54px,4.3vw,66px);
+  --jt-body:clamp(16px,1.22vw,18px);
+  --jt-ui:clamp(14px,1.05vw,16px);
+  --jt-small:clamp(12px,.92vw,14px);
+  --jt-window-width:92vw;
+}
+html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;--jt-ui:14px;--jt-small:12px;--jt-window-width:94vw}
+@media(pointer:coarse){:root{--jt-window-width:94vw}}
+@media(max-width:900px){:root{--jt-icon:58px;--jt-dock-icon:51px;--jt-body:16px;--jt-ui:14px;--jt-small:12px}}
+@media(max-width:580px){:root,html[data-jt-device]{--jt-icon:54px;--jt-dock-icon:47px}}
+@media(max-height:600px){:root,html[data-jt-device]{--jt-icon:54px;--jt-dock-icon:47px}}
+
+.desktop>.icons{width:calc(var(--jt-icon) + 28px);gap:clamp(8px,1.5vh,16px);max-height:calc(100% - 174px);overflow-y:auto;scrollbar-width:thin}
+.desktop>.icons .tile,#ltsDesktop .lts-appicon{width:var(--jt-icon);height:var(--jt-icon);font-size:calc(var(--jt-icon) * .5);border-radius:calc(var(--jt-icon) * .24);flex-shrink:0}
+.desktop>.icons .app-icon,#ltsDesktop .lts-appname{font-size:var(--jt-ui);line-height:1.3}
+.desktop>.dock .tile,#ltsDesktop .lts-dicon{width:var(--jt-dock-icon);height:var(--jt-dock-icon);font-size:calc(var(--jt-dock-icon) * .52)}
+.desktop>.dock{z-index:10}
+#ltsDesktop .lts-apps{width:calc(var(--jt-icon) * 2 + 70px);grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 14px;top:92px;max-height:calc(100% - 194px);overflow-y:auto;scrollbar-width:thin}
+.desktop .calendar-tile small{font-size:calc(var(--jt-icon) * .18);line-height:1.3;padding:4px 0}
+.desktop .calendar-tile b{font-size:calc(var(--jt-icon) * .5);line-height:1.25}
+#ltsDesktop .lts-icon-calendar{font-size:calc(var(--jt-icon) * .38)}
+
+/* Title bars keep the existing 48px height and 44px navigation targets. */
+.desktop .wtitle,.desktop .folder,.desktop .oname,.desktop .sender,.desktop .subject,
+.desktop .convhead,.desktop .chatname,.lts-wtitle,.lts-wx-cname,.lts-wx-title,
+.lts-mail-sender,.lts-mail-subject,.lts-mail-detailtitle{font-size:var(--jt-ui)}
+.desktop .oemail,.desktop .time,.desktop .preview,.desktop .listhead,
+.desktop .meta,.desktop .notice,.desktop .snip,.desktop .stamp,.desktop .chatsearch,
+.lts-mail-account,.lts-mail-date,.lts-mail-preview,.lts-mail-meta,.lts-mail-auto,
+.lts-wx-snip,.lts-wx-ctime,.lts-wx-date,.lts-wx-system,.lts-notecount,.lts-note-date{font-size:var(--jt-small)}
+#mailWindow .text,.lts-mail-body,.desktop .bubble,.lts-wx-bubble,.lts-note-body{font-size:var(--jt-body);line-height:1.8}
+.desktop .msg.note .bubble{font-size:var(--jt-small)}
+#mailWindow .mailpage{max-width:960px}
+#mailWindow .msubject,.lts-mail-h1{font-size:clamp(20px,1.8vw,26px);overflow-wrap:anywhere}
+#mailWindow .mitem,.lts-mail-item{padding:16px 18px}
+#mailWindow .meta,.lts-mail-meta{overflow-wrap:anywhere}
+.desktop .bubble{max-width:min(560px,78%)}
+.lts-wx-bubble{max-width:min(620px,76%)}
+.desktop .messages,.lts-wx-scroll,.lts-mail-scroll,.lts-browser-page{min-height:0}
+.lts-note-paper{max-width:900px}
+.lts-lockform,.lts-passwordrow{min-height:44px}
+.lts-lockform input,.lts-passwordrow input,.tc-pass-row input{font-size:16px}
+.jtcode-hero p,.jtcode-pagebox p,.jtcode-pagebox li,.jtcode-private-article p,.jtcode-bubble,
+.mudan-websearch-desc,.jtcode-search-desc,.hz-desc,.jtgov-result-desc{font-size:var(--jt-body);line-height:1.8}
+.jtcode-newsdesc,.jtcode-feature p,.jtcode-contact-preview,.jtcode-record-main span,
+.jtcode-sidecard a,.jtcode-search-domain,.mudan-websearch-domain{font-size:var(--jt-ui)}
+
+/* Both browser homepages share readable search controls and bounded lines. */
+#browserWindow .browserbody,#ltsGenericBrowser .lts-browser-page{padding:clamp(28px,5vh,56px) clamp(16px,4vw,64px) 48px;min-height:0}
+#ltsGenericBrowser .lts-browser-home{max-width:840px}
+#browserWindow .tiansearch-wordmark,#ltsGenericBrowser .tiansearch-wordmark{font-size:clamp(38px,3.7vw,56px)}
+#browserWindow .searchform,#ltsGenericBrowser .lts-story-form{max-width:760px;height:56px;flex-shrink:0}
+#browserWindow .searchform input,#ltsGenericBrowser .lts-story-form input{font-size:var(--jt-body)}
+#browserWindow .searchbtn,#ltsGenericBrowser .lts-story-form button{height:44px;min-width:76px;font-size:var(--jt-ui)}
+#browserWindow .tiansearch-tabs,#ltsGenericBrowser .lts-search-modes,#browserWindow .history,#ltsGenericBrowser .lts-browser-bookmarks{max-width:760px}
+#browserWindow .tiansearch-tabs span,#ltsGenericBrowser .lts-search-modes label,#browserWindow .hist b,#ltsGenericBrowser .lts-browser-bookmark{font-size:var(--jt-ui)}
+#browserWindow .addr,#ltsGenericBrowser .lts-browser-address,#browserWindow .history h3,
+#browserWindow .hist span,#browserWindow .searchtip,#ltsGenericBrowser .lts-browser-hint,
+#ltsGenericBrowser .lts-browser-bookmarks h4,#browserWindow .tiansearch-brand small,
+#ltsGenericBrowser .lts-search-logo small{font-size:var(--jt-small)}
+#browserWindow .browserbar{grid-template-columns:64px minmax(0,1fr) 44px}
+
+@media(min-width:901px){
+  .desktop>.window,#ltsDesktop>.lts-appwindow,.lts-unlocked-window,.lts-file-docwin,.lts-album-window{
+    left:50%;right:auto;top:52px;bottom:110px;transform:translateX(-50%);
+    width:min(1440px,var(--jt-window-width));height:auto;max-height:none;
+  }
+  #mailWindow .mailgrid{grid-template-columns:clamp(205px,19vw,270px) minmax(0,1fr)}
+  .desktop .wechatgrid{grid-template-columns:74px clamp(240px,22vw,330px) minmax(0,1fr)}
+  .lts-wx-shell,.lts-mail-shell{grid-template-columns:clamp(270px,26vw,370px) minmax(0,1fr)}
+  .desktop .snip{max-width:none}
+  .desktop .chat>div:last-child{min-width:0}
+  .lts-file-paper{padding-left:max(32px,calc((100% - 860px)/2));padding-right:max(32px,calc((100% - 860px)/2))}
+}
+@media(max-width:900px){
+  .desktop>.window{left:8px;right:8px;top:40px;bottom:8px;width:auto;height:auto;transform:none}
+}
+@media(max-width:580px){
+  #ltsDesktop .lts-apps{left:12px;right:12px;top:100px;width:auto;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 7px;max-height:calc(100% - 194px)}
+  #ltsDesktop .lts-appname{font-size:12px}
+  #browserWindow .tiansearch-wordmark,#ltsGenericBrowser .tiansearch-wordmark{font-size:34px}
+  #browserWindow .browserbar{grid-template-columns:40px minmax(0,1fr) 24px;gap:6px;padding:9px 10px}
+  #browserWindow .searchbtn,#ltsGenericBrowser .lts-story-form button{padding:0 12px;min-width:64px}
+  .lts-mail-scroll{padding:22px 18px 48px}
+}
+/* Short landscape windows need fewer icon rows, even on a wide display. */
+@media(max-height:600px) and (min-width:581px){
+  .desktop>.icons{width:172px;grid-template-columns:repeat(2,minmax(0,1fr));top:64px;max-height:calc(100% - 150px)}
+  #ltsDesktop .lts-apps{width:340px;grid-template-columns:repeat(4,minmax(0,1fr));top:92px;gap:10px;max-height:calc(100% - 178px)}
+  .desktop>.window,#ltsDesktop>.lts-appwindow,.lts-unlocked-window,.lts-file-docwin,.lts-album-window{bottom:8px}
+  #browserWindow .browserbody,#ltsGenericBrowser .lts-browser-page{padding-top:24px}
+}
+</style>
 </body></html>
