@@ -179,6 +179,7 @@
 #adminLog8 .admin-main{padding-top:12px}
 #adminLog8 .admin-log-page{max-width:none;min-height:calc(100vh - 110px);border-radius:0;background:#090c11;padding:12px 12px 20px;border-left:0;border-right:0;display:flex;flex-direction:column}
 #adminLog8 .admin-log-back,#adminLog8 .admin-log-date-big,#adminLog8 h2{margin-bottom:10px}
+#adminLog8 .admin-log-back{align-self:flex-start;justify-content:flex-start;flex-shrink:0}
 #adminLog8 .admin-log-body.weird{flex:1;display:block;padding-top:2px;width:100%}
 @media(max-width:760px){#adminLog8 .admin-log-page{min-height:calc(100vh - 96px);padding:10px 10px 20px}#adminLog8 .admin-log-back{margin-bottom:10px}#adminLog8 .admin-log-date-big{margin-bottom:6px}#adminLog8 h2{margin-bottom:10px;font-size:20px}#adminLog8 .admin-log-body.weird{font-size:18px;line-height:1.02;letter-spacing:-.02em}}
 
@@ -4483,7 +4484,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
         <div class="jtgov-formrow"><label class="jtgov-formlabel" for="jtgovReason">举报原因：</label><div class="jtgov-formfield"><textarea id="jtgovReason" placeholder="请说明举报事实、经过及相关责任"></textarea><div class="jtgov-reason-hint"><b>填写提示：</b>我要举报的是（谁）和（谁）。（谁）在（日期）被精神病患者杀害。事实上，是（谁）故意激怒患者，引导患者杀害（谁）。此外，（谁）甚至给（谁）做了多次（是个名词）治疗，导致他失忆，为了让他忘记（谁）已经死亡的真相。（谁）得知事件的来龙去脉，并且作为保护伞滥用职权包庇（谁）。</div></div></div>
         <div class="jtgov-formrow"><label class="jtgov-formlabel" for="jtgovReportDate">举报日期：</label><div class="jtgov-formfield"><input id="jtgovReportDate" type="text" lang="zh-CN" placeholder="请填写举报日期"></div></div>
       </div>
-      <div class="jtgov-formnotice">请确认信息准确、事实清楚。提交失败时，已填写的内容不会被清除，可直接修改后再次提交。</div>
+      <div class="jtgov-formnotice">请确认信息准确、事实清楚。离开本页查阅信息或提交失败时，已填写的内容都会保留，返回后可继续填写。</div>
       <div class="jtgov-submitrow"><button class="jtgov-submit" id="jtgovSubmitComplaint" type="submit">提交举报</button><div class="jtgov-submitmsg" id="jtgovSubmitMessage" aria-live="polite"></div><a class="jtgov-formback" href="#jtgovReport" data-jt-nav="back">‹ 返回举报说明</a></div>
     </form>
   </div>
@@ -4708,8 +4709,13 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       localStorage.removeItem(store.date);
     }catch(e){}
   }
-  function resetReportForm(){
+  function resetReportFeedback(){
     if(timer){clearTimeout(timer);timer=null;}
+    if(msg){msg.textContent='';msg.className='jtgov-submitmsg';}
+    if(submit){submit.disabled=false;submit.textContent='提交举报';}
+  }
+  function resetReportForm(){
+    resetReportFeedback();
     if(form&&form.reset){form.reset();}
     else{
       if(reporter)reporter.value='';
@@ -4718,8 +4724,6 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       if(date)date.value='';
     }
     clearStoredDraft();
-    if(msg){msg.textContent='';msg.className='jtgov-submitmsg';}
-    if(submit){submit.disabled=false;submit.textContent='提交举报';}
   }
   function reasonOK(raw){
     var s=clean(raw), rawText=String(raw||'').toLowerCase();
@@ -4748,7 +4752,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       if(location.hash==='#jtgovReportForm')location.hash='trueEndingPending';
     },3000);
   }
-  if(openBtn)openBtn.addEventListener('click',function(){resetReportForm();location.hash='jtgovReportForm';},false);
+  if(openBtn)openBtn.addEventListener('click',function(){resetReportFeedback();location.hash='jtgovReportForm';},false);
   if(form){
     [reporter,targets,reason,date].forEach(function(el){if(el)el.addEventListener('input',function(){if(msg){msg.textContent='';msg.className='jtgov-submitmsg';}},false);});
     form.addEventListener('submit',function(e){
@@ -4762,9 +4766,10 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     },false);
   }
   window.addEventListener('hashchange',function(){
-    if(location.hash==='#jtgovReportForm')resetReportForm();
+    if(location.hash==='#jtgovReportForm')resetReportFeedback();
     else if(timer){clearTimeout(timer);timer=null;}
   },false);
+  // Start a new playthrough cleanly; in-game navigation keeps the current draft.
   resetReportForm();
 })();
 </script>
