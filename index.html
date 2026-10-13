@@ -2754,8 +2754,8 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
   var data={
     '白瑞':{title:'白瑞｜历史住院档案',meta:'绝密患者档案 · 2019',desc:'2019年5月入院。主治医师：雷青泽。该记录已被标记为限制访问。',href:'#adminBaiRuiRecord'},
     '陆添时':{title:'陆添时｜住院档案',meta:'患者档案 · 2021',desc:'入院日期：2021年3月9日。主治医师：雷青泽。诊断及治疗计划包含 MECT。',href:'#mudanLTSRecord'},
-    '张又英':{title:'张又英｜历史职工档案',meta:'职工档案',desc:'原心理咨询师。2021年5月5日离职。历史账号状态：只读。',href:'#mudanZhangProfile'},
-    '心理咨询':{title:'张又英｜心理咨询师',meta:'职工档案',desc:'心理咨询、家属会谈、危机干预。状态：已辞职。',href:'#mudanZhangProfile'},
+    '张又英':{title:'张又英｜历史职工档案',meta:'职工档案',desc:'原心理咨询师。2021年5月5日离职。历史账号状态：只读。',href:'#mudanZhang'},
+    '心理咨询':{title:'张又英｜心理咨询师',meta:'职工档案',desc:'心理咨询、家属会谈、危机干预。状态：已辞职。',href:'#mudanZhang'},
     'MECT':{title:'MECT｜院内治疗项目',meta:'治疗管理',desc:'管理员权限可查看院内 MECT 排程、历史执行记录及相关病例。'},
     'mect':{title:'MECT｜院内治疗项目',meta:'治疗管理',desc:'管理员权限可查看院内 MECT 排程、历史执行记录及相关病例。'},
     'ECT':{title:'ECT｜历史治疗记录',meta:'历史资料',desc:'系统检索到 2019 年起的历史电抽搐治疗记录。部分早期记录权限标记为“管理员”。'},
@@ -2770,10 +2770,36 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
     outEl.innerHTML='<div class="admin-result"><span class="meta">'+r.meta+'</span><h3>'+r.title+'</h3><p>'+r.desc+'</p>'+(r.href?'<a href="'+r.href+'">打开记录 ›</a>':'')+'</div>';
     return false;
   }
+  /* Return to the search area that opened Zhang Youying's profile. */
+  var zhangBack=document.querySelector('#mudanZhang .mudan-back');
+  window.addEventListener('hashchange',function(e){
+    if(location.hash!=='#mudanZhang'||!zhangBack)return;
+    var previous=(e.oldURL||'').split('#')[1]||'';
+    var fromAdmin=previous==='mudanAdminSearch'||previous==='mudanAdminPortal';
+    zhangBack.setAttribute('href',fromAdmin?'#mudanAdminSearch':'#mudanSearchZhang');
+    zhangBack.textContent=fromAdmin?'‹ 返回院内搜索':'‹ 返回搜索结果';
+  });
   var f=document.getElementById('adminSearchForm'),i=document.getElementById('adminSearchInput'),o=document.getElementById('adminSearchResults');
   if(f&&i&&o){f.addEventListener('submit',function(e){e.preventDefault();render(i,o);});}
   var qf=document.getElementById('adminQuickSearch'),qi=document.getElementById('adminQuickInput');
-  if(qf&&qi){qf.addEventListener('submit',function(e){e.preventDefault();var q=norm(qi.value);if(q==='白瑞'){location.hash='adminBaiRuiSearchResult';return;}location.hash='mudanAdminSearch';setTimeout(function(){var si=document.getElementById('adminSearchInput'),so=document.getElementById('adminSearchResults');if(si&&so){si.value=q;render(si,so);}},30);});}
+  if(qf&&qi){qf.addEventListener('submit',function(e){
+    e.preventDefault();
+    var q=norm(qi.value);
+    if(q==='白瑞'){location.hash='adminBaiRuiSearchResult';return;}
+    function showQuickResult(){
+      if(location.hash!=='#mudanAdminSearch')return;
+      if(i&&o){i.value=q;render(i,o);}
+    }
+    if(location.hash==='#mudanAdminSearch'){showQuickResult();return;}
+    function afterSearchNavigation(e){
+      window.removeEventListener('hashchange',afterSearchNavigation);
+      if((e.newURL||'').split('#')[1]!=='mudanAdminSearch')return;
+      /* Registered on submit, after the global search-reset listener. */
+      setTimeout(showQuickResult,0);
+    }
+    window.addEventListener('hashchange',afterSearchNavigation);
+    location.hash='mudanAdminSearch';
+  });}
 })();
 </script>
 <section aria-label="京田市公安局搜索结果" id="policeSearchResult">
