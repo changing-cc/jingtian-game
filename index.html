@@ -4150,7 +4150,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
 
   function arm(){
-    if(!photosReady())return;
+    if(!pagesOpen()||!photosReady())return;
     if(getFlag(FLAG)||!getFlag(PAGES))return;
     var due=parseInt(getValue(DUE)||'0',10);
     if(!due){
@@ -4160,9 +4160,9 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     scheduleFromDue();
   }
 
-  function pagesOpen(){return !!(pagesRadio&&pagesRadio.checked);}
+  function pagesOpen(){return !!(appMail&&appMail.checked&&pagesRadio&&pagesRadio.checked&&pagesPage&&pagesPage.getBoundingClientRect().width>0);}
   function checkBottom(){
-    if(!pagesOpen()||getFlag(FLAG)||!getFlag(PAGES)||!mailView)return;
+    if(!pagesOpen()||getFlag(FLAG)||!getFlag(PAGES)||!mailView||mailView.clientHeight<=0)return;
     var nearBottom=mailView.scrollTop+mailView.clientHeight>=mailView.scrollHeight-36;
     var photos=pagesPage&&pagesPage.querySelectorAll('.tc-pages-only img');
     var last=photos&&photos[photos.length-1];
