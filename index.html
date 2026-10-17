@@ -34,6 +34,10 @@
   }
 })();
 </script>
+<style id="jt-save-first-paint">
+html.jt-restoring{background:#112130}
+html.jt-restoring body{opacity:0!important;pointer-events:none!important}
+</style>
 <script id="jt-game-save-bootstrap">
 (function(){
   'use strict';
@@ -43,6 +47,10 @@
   var saved=null;
   try{saved=parse(read(sessionStorage,KEY));}catch(e){}
   if(!saved){try{saved=parse(read(localStorage,KEY));}catch(e){}}
+  /* Suppress the initial scene before body parsing; reveal only after restoring it. */
+  if(saved)document.documentElement.classList.add('jt-restoring');
+  function revealSavedPage(){document.documentElement.classList.remove('jt-restoring');}
+  document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(revealSavedPage);},false);
   function eachStore(fn){try{fn(localStorage);}catch(e){}try{fn(sessionStorage);}catch(e){}}
   function clearStory(){
     eachStore(function(storage){for(var i=storage.length-1;i>=0;i--){var key=storage.key(i);if(/^v\d+_jt_/.test(key||''))storage.removeItem(key);}});
@@ -5661,7 +5669,10 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     }
     api.restoring=false;
     window.dispatchEvent(new CustomEvent('jt:game-restored'));
-    requestAnimationFrame(function(){applyScroll();api.saveSoon();});
+    requestAnimationFrame(function(){
+      try{applyScroll();}finally{document.documentElement.classList.remove('jt-restoring');}
+      api.saveSoon();
+    });
   }
   function userMoved(){scrollRecovery=false;}
   ['pointerdown','touchstart','wheel','keydown'].forEach(function(name){document.addEventListener(name,userMoved,{passive:true,capture:true});});
