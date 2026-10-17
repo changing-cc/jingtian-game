@@ -34,6 +34,63 @@
   }
 })();
 </script>
+<script id="jt-game-save-bootstrap">
+(function(){
+  'use strict';
+  var KEY='jt_game_save_v1', getters={}, pending=null, stopped=false;
+  function read(storage,key){try{return storage.getItem(key);}catch(e){return null;}}
+  function parse(value){try{var s=JSON.parse(value);return s&&s.version===1&&typeof s.hash==='string'&&s.story&&typeof s.story==='object'&&s.ui&&Array.isArray(s.ui.controls)&&Array.isArray(s.ui.panels)?s:null;}catch(e){return null;}}
+  var saved=null;
+  try{saved=parse(read(sessionStorage,KEY));}catch(e){}
+  if(!saved){try{saved=parse(read(localStorage,KEY));}catch(e){}}
+  function eachStore(fn){try{fn(localStorage);}catch(e){}try{fn(sessionStorage);}catch(e){}}
+  function clearStory(){
+    eachStore(function(storage){for(var i=storage.length-1;i>=0;i--){var key=storage.key(i);if(/^v\d+_jt_/.test(key||''))storage.removeItem(key);}});
+    try{window.name=(window.name||'').split('|').filter(function(part){return part&&!/^v\d+_jt_/.test(part.split('=')[0]);}).join('|');}catch(e){}
+  }
+  function story(){
+    var result={};
+    try{(window.name||'').split('|').forEach(function(part){var p=part.indexOf('='),key=part.slice(0,p);if(p>0&&/^v\d+_jt_/.test(key))result[key]=part.slice(p+1);});}catch(e){}
+    eachStore(function(storage){for(var i=0;i<storage.length;i++){var key=storage.key(i);if(/^v\d+_jt_/.test(key||''))result[key]=storage.getItem(key);}});
+    return result;
+  }
+  if(saved){
+    clearStory();
+    Object.keys(saved.story).forEach(function(key){if(!/^v\d+_jt_/.test(key)||typeof saved.story[key]!=='string')return;eachStore(function(storage){storage.setItem(key,saved.story[key]);});});
+    try{var entries=Object.keys(saved.story).filter(function(key){return /^v\d+_jt_/.test(key)&&saved.story[key]==='1';}).map(function(key){return key+'=1';});window.name=[window.name||''].concat(entries).filter(Boolean).join('|');}catch(e){}
+    /* Restore the same scene without firing a navigation event or adding history. */
+    if(!saved.hash||/^#[A-Za-z][\w-]*$/.test(saved.hash)){
+      try{history.replaceState(history.state,'',location.pathname+location.search+saved.hash);}catch(e){}
+    }
+  }
+  var api=window.jtGameSave={
+    restoring:!!saved,
+    snapshot:saved,
+    getState:function(name){return saved&&saved.logic&&saved.logic[name]||null;},
+    register:function(name,getter){getters[name]=getter;},
+    saveSoon:function(){if(stopped||api.restoring||!api.capture)return;if(pending!==null)return;pending=setTimeout(function(){pending=null;api.save();},160);},
+    save:function(){
+      if(stopped||api.restoring||!api.capture)return false;
+      if(pending!==null){clearTimeout(pending);pending=null;}
+      var logic={};Object.keys(getters).forEach(function(name){try{logic[name]=getters[name]();}catch(e){}});
+      var snapshot={version:1,savedAt:Date.now(),hash:location.hash,story:story(),logic:logic,ui:api.capture()};
+      var text;try{text=JSON.stringify(snapshot);}catch(e){return false;}
+      var ok=false;eachStore(function(storage){storage.setItem(KEY,text);ok=true;});
+      api.lastSaveSucceeded=ok;return ok;
+    },
+    restart:function(){
+      if(!window.confirm('确定要清空当前游戏进度，从头开始吗？\n普通刷新不会清空进度。此操作无法撤销。'))return false;
+      stopped=true;
+      if(pending!==null){clearTimeout(pending);pending=null;}
+      clearStory();eachStore(function(storage){storage.removeItem(KEY);});
+      try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+      location.reload();return true;
+    }
+  };
+  window.addEventListener('pagehide',function(){api.save();},false);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')api.save();},false);
+})();
+</script>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
@@ -3125,6 +3182,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <script id="route-stability-v52">
 (function(){
   function stabilizeRoute(){
+    if(window.jtGameSave&&window.jtGameSave.restoring)return;
     var id=(location.hash||'').slice(1); if(!id)return;
     var el=document.getElementById(id); if(!el)return;
     try{el.scrollTop=0;}catch(e){}
@@ -3132,7 +3190,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
     if(inner){try{inner.scrollTop=0;}catch(e){}}
   }
   window.addEventListener('hashchange',function(){requestAnimationFrame(stabilizeRoute);});
-  window.addEventListener('pageshow',function(e){if(!e.persisted)stabilizeRoute();});
+  window.addEventListener('pageshow',function(e){if(!e.persisted&&!(window.jtGameSave&&window.jtGameSave.snapshot))stabilizeRoute();});
   document.addEventListener('DOMContentLoaded',stabilizeRoute);
 })();
 </script>
@@ -3614,31 +3672,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 看着看着，我的头就开始痛。最近总是头痛，感觉像有谁在捏我脑壳一样。难道是吹到风，感冒了？不知道……</div></div></article></div>
 </div>
 </section>
-<script id="v148-mail-run-reset">
-(function(){
-  /* 新载入页面时重新开局；从浏览器缓存恢复时保留本局，不主动刷新。 */
-  var keys=[
-    'v142_jt_notebook_mail_available',
-    'v142_jt_notebook_pages_available',
-    'v142_jt_yang_threat_mail_available',
-    'v142_jt_yang_threat_due_at',
-    'v142_jt_lts_blog_visited',
-    'v142_jt_yang_choice_declined'
-  ];
-  function clearRunState(){
-    keys.forEach(function(key){
-      try{localStorage.removeItem(key);}catch(e){}
-      try{sessionStorage.removeItem(key);}catch(e){}
-    });
-    try{
-      window.name=(window.name||'').split('|').filter(Boolean).filter(function(part){
-        return !keys.some(function(key){return part.indexOf(key+'=')===0;});
-      }).join('|');
-    }catch(e){}
-  }
-  clearRunState();
-})();
-</script>
+<!-- Game progress is retained until the explicit confirmed restart. -->
 <script id="v148-lts-login-no-reload">
 (function(){
   function getFlag(key){
@@ -3720,6 +3754,24 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     }catch(e){}
   }
 
+  var saveManager=window.jtGameSave;
+  var NOTEBOOK_DUE='v142_jt_notebook_due_at';
+  var notebookDueMemory=0;
+  function isRestoring(){return !!(saveManager&&saveManager.restoring);}
+  function saveSoon(){if(saveManager)saveManager.saveSoon();}
+  function readDue(){
+    var value='';
+    try{value=localStorage.getItem(NOTEBOOK_DUE)||'';}catch(e){}
+    if(!value){try{value=sessionStorage.getItem(NOTEBOOK_DUE)||'';}catch(e){}}
+    if(Number(value)>0)notebookDueMemory=Number(value);
+    return notebookDueMemory;
+  }
+  function writeDue(value){
+    notebookDueMemory=Number(value)||0;
+    try{if(value)localStorage.setItem(NOTEBOOK_DUE,String(value));else localStorage.removeItem(NOTEBOOK_DUE);}catch(e){}
+    try{if(value)sessionStorage.setItem(NOTEBOOK_DUE,String(value));else sessionStorage.removeItem(NOTEBOOK_DUE);}catch(e){}
+    saveSoon();
+  }
   var delivered = getFlag('v142_jt_notebook_mail_available');
   var scheduled = false;
   var deliveryTimer = null;
@@ -3746,6 +3798,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   function makeMailAvailable(showPopup){
     setFlag('v142_jt_notebook_mail_available');
     delivered = true;
+    writeDue(0);
     if(mailItem) mailItem.classList.remove('mail-hidden');
     syncInboxCount();
     if(showPopup && popup){
@@ -3754,16 +3807,25 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     }
   }
 
+  function resumeMailSchedule(){
+    if(isRestoring()||delivered||scheduled)return;
+    var due=readDue();
+    if(!due)return;
+    bottomSeen=true;
+    scheduled=true;
+    deliveryTimer=setTimeout(function(){
+      deliveryTimer=null;
+      scheduled=false;
+      if(isRestoring())return;
+      /* Reading the article bottom commits this delivery even after navigation. */
+      if(bottomSeen&&!delivered)makeMailAvailable(true);
+    },Math.max(0,due-Date.now()));
+  }
   function scheduleMail(){
-    if(delivered || scheduled) return;
-    bottomSeen = true;
-    scheduled = true;
-    deliveryTimer = setTimeout(function(){
-      deliveryTimer = null;
-      scheduled = false;
-      /* 一旦玩家看到了文章底部，轻微回弹或切换页面都不应取消新邮件。 */
-      if(bottomSeen && !delivered) makeMailAvailable(true);
-    },4000);
+    if(isRestoring()||delivered||scheduled)return;
+    bottomSeen=true;
+    if(!readDue())writeDue(Date.now()+4000);
+    resumeMailSchedule();
   }
 
   function cancelMailSchedule(){
@@ -3772,7 +3834,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
 
   function isAtArticleBottom(){
-    if(!articlePage || location.hash!=='#frontalTumorHospitalArticle') return false;
+    if(isRestoring()||!articlePage || location.hash!=='#frontalTumorHospitalArticle') return false;
     /* 提前约四分之一屏判定，并兼容 iPhone / iPad Safari 的回弹与小数滚动。 */
     var top=Number(articlePage.scrollTop)||0;
     var height=Number(articlePage.clientHeight)||0;
@@ -3853,6 +3915,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       if(mailItem) mailItem.classList.remove('mail-hidden');
     }
     syncInboxCount();
+    resumeMailSchedule();
   }
   function handleHash(){
     if(location.hash==='#frontalTumorHospitalArticle') bindWatcher();
@@ -3869,6 +3932,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   window.addEventListener('hashchange',handleHash,false);
   document.addEventListener('DOMContentLoaded',function(){restore();handleHash();},false);
   window.addEventListener('load',function(){restore();handleHash();},false);
+  window.addEventListener('jt:game-restored',function(){restore();handleHash();},false);
   restore();
 })();
 </script>
@@ -4007,7 +4071,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   function init(){
     syncInbox();
     updatePasswordBox();
-    if(notebookMailRadio&&notebookMailRadio.checked) resetPasswordEntry();
+    if(!(window.jtGameSave&&(window.jtGameSave.restoring||window.jtGameSave.snapshot))&&notebookMailRadio&&notebookMailRadio.checked) resetPasswordEntry();
   }
   document.addEventListener('DOMContentLoaded',init,false);
   window.addEventListener('load',init,false);
@@ -4050,6 +4114,9 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   var PAGES='v142_jt_notebook_pages_available';
   var timer=null;
   var lastPhotoObserver=null;
+  var saveManager=window.jtGameSave;
+  function isRestoring(){return !!(saveManager&&saveManager.restoring);}
+  function saveSoon(){if(saveManager)saveManager.saveSoon();}
 
   function getFlag(key){
     try{if(localStorage.getItem(key)==='1')return true;}catch(e){}
@@ -4128,15 +4195,18 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
 
   function deliver(){
+    if(isRestoring())return;
     if(getFlag(FLAG)){sync();return;}
     setFlag(FLAG);
     clearValue(DUE);
     if(item){item.classList.remove('mail-hidden');item.classList.add('tc-newmail-unread');}
     sync();
     showToast();
+    saveSoon();
   }
 
   function scheduleFromDue(){
+    if(isRestoring())return;
     if(getFlag(FLAG)){sync();return;}
     var due=parseInt(getValue(DUE)||'0',10);
     if(!due)return;
@@ -4157,11 +4227,12 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     return !!(mailView&&mailView.clientHeight>0&&mailView.scrollTop+mailView.clientHeight>=mailView.scrollHeight-2);
   }
   function arm(){
-    if(!pagesOpen()||!photosReady()||!atBottom()||getFlag(FLAG)||!getFlag(PAGES))return;
+    if(isRestoring()||!pagesOpen()||!photosReady()||!atBottom()||getFlag(FLAG)||!getFlag(PAGES))return;
     var due=parseInt(getValue(DUE)||'0',10);
     if(!due){
       due=Date.now()+3000;
       setValue(DUE,due);
+      saveSoon();
     }
     scheduleFromDue();
   }
@@ -4205,6 +4276,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   document.addEventListener('DOMContentLoaded',init,false);
   window.addEventListener('load',init,false);
   window.addEventListener('pageshow',function(){sync();scheduleFromDue();},false);
+  window.addEventListener('jt:game-restored',init,false);
   init();
 })();
 </script>\n
@@ -4264,7 +4336,12 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   var mailDefault=document.getElementById('mail-default');
   var page=document.getElementById('pyangthreat');
   var armTimer=null;
-  var dismissedThisOpen=false;
+  var saveManager=window.jtGameSave;
+  var savedChoice=saveManager&&saveManager.getState('yangChoice');
+  var dismissedThisOpen=!!(savedChoice&&savedChoice.dismissed);
+  function isRestoring(){return !!(saveManager&&saveManager.restoring);}
+  function saveSoon(){if(saveManager)saveManager.saveSoon();}
+  if(saveManager)saveManager.register('yangChoice',function(){return {dismissed:dismissedThisOpen};});
   var OLD_DECLINE_KEY='v142_jt_yang_choice_declined';
 
   /* 清除旧版会让选择窗永久消失的记录。 */
@@ -4276,17 +4353,20 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
 
   function showChoice(force){
+    if(isRestoring())return;
     if(!force&&dismissedThisOpen) return;
     if(!threatMailIsOpen()) return;
     if(!toast) return;
     if(badScreen && badScreen.classList.contains('show')) return;
     toast.classList.add('show');
     toast.setAttribute('aria-hidden','false');
+    saveSoon();
   }
   function hideChoice(){
     if(!toast) return;
     toast.classList.remove('show');
     toast.setAttribute('aria-hidden','true');
+    saveSoon();
   }
   function showBadEnding(){
     hideChoice();
@@ -4313,6 +4393,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     },140);
   }
   function watchOpen(){
+    if(isRestoring())return;
     if(threatMailIsOpen()){ showChoice(); }
     else hideChoice();
   }
@@ -4334,6 +4415,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   document.addEventListener('DOMContentLoaded',watchOpen,false);
   window.addEventListener('load',watchOpen,false);
   window.addEventListener('pageshow',watchOpen,false);
+  window.addEventListener('jt:game-restored',watchOpen,false);
   watchOpen();
 })();
 </script>
@@ -4379,19 +4461,28 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   var back=document.getElementById('beNewsBackBtn');
   var bottom=document.querySelector('#badEndingScreen .bad-ending-actions');
   var yes=document.getElementById('yangChoiceYesBtn');
-  var timer=null,observer=null,pending=false,opened=false;
+  var saveManager=window.jtGameSave;
+  var savedNews=saveManager&&saveManager.getState('beNews');
+  var timer=null,observer=null,pending=!!(savedNews&&savedNews.pending),opened=!!(savedNews&&savedNews.opened);
+  var due=Number(savedNews&&savedNews.due)||0;
+  function isRestoring(){return !!(saveManager&&saveManager.restoring);}
+  function saveSoon(){if(saveManager)saveManager.saveSoon();}
+  if(saveManager)saveManager.register('beNews',function(){return {pending:pending,opened:opened,due:due};});
 
-  function clearTimer(){if(timer){clearTimeout(timer);timer=null;}}
+  function clearTimer(keepDue){if(timer){clearTimeout(timer);timer=null;}if(!keepDue)due=0;}
   function showToast(){
+    if(isRestoring())return;
     clearTimer();
     if(opened||!toast)return;
     pending=true;
     toast.classList.add('show');
+    saveSoon();
   }
   function hideToast(){if(toast)toast.classList.remove('show');}
   function openNews(){
     if(!news)return;
-    pending=false;opened=true;hideToast();
+    pending=false;opened=true;clearTimer();hideToast();
+    saveSoon();
     news.classList.add('show');news.setAttribute('aria-hidden','false');
     try{news.scrollTop=0;}catch(e){}
   }
@@ -4401,11 +4492,14 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     try{if(bad)bad.focus({preventScroll:true});}catch(e){}
   }
   function scheduleToast(){
-    if(opened||pending||timer||!bad||!bad.classList.contains('show'))return;
-    timer=setTimeout(showToast,2600);
+    if(isRestoring()||opened||pending||timer||!bad||!bad.classList.contains('show'))return;
+    if(!due)due=Date.now()+2600;
+    timer=setTimeout(showToast,Math.max(0,due-Date.now()));
+    saveSoon();
   }
   function armObserver(){
-    clearTimer();
+    if(isRestoring())return;
+    clearTimer(true);
     if(observer){try{observer.disconnect();}catch(e){}observer=null;}
     if(!bad||!bad.classList.contains('show')||opened||pending||!bottom)return;
     if('IntersectionObserver' in window){
@@ -4425,6 +4519,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     /* 如果上一轮的新闻通知还没有被玩家点开，就保留它，不主动消失。 */
     if(!pending){hideNews();hideToast();setTimeout(armObserver,120);}
     else{hideNews();showToast();}
+    saveSoon();
   }
   function activateToast(){openNews();}
 
@@ -4436,10 +4531,18 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
   if(bad&&'MutationObserver' in window){
     new MutationObserver(function(){
+      if(isRestoring())return;
       if(bad.classList.contains('show')){if(!opened&&!pending)armObserver();}
-      else{clearTimer();/* pending toast intentionally remains visible */}
+      else{clearTimer();saveSoon();/* pending toast intentionally remains visible */}
     }).observe(bad,{attributes:true,attributeFilter:['class']});
   }
+  window.addEventListener('jt:game-restored',function(){
+    if(pending&&!opened){showToast();return;}
+    if(!opened&&bad&&bad.classList.contains('show')){
+      armObserver();
+      if(due)scheduleToast();
+    }
+  },false);
 })();
 </script>
 <style id="v133-custom-emblem">
@@ -4612,8 +4715,9 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       </div>
       <div class="te-menu-actions">
         <a href="#trueEndingMail" data-jt-nav="back">返回邮件</a>
-        <a class="primary" href="#" id="trueEndingMenuHomeBtn" data-jt-nav="back">返回开头页面</a>
+        <button class="primary" type="button" id="trueEndingMenuHomeBtn">刷新游戏—真•重新开始</button>
       </div>
+      <div class="te-restart-note">普通刷新会保留进度；重新开始会清空本局进度，并再次请你确认。</div>
     </article>
   </div>
 </section>
@@ -4679,18 +4783,19 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 .te-menu-disclaimer b{display:block;margin-bottom:8px;color:#321247;font-size:14px;letter-spacing:.08em}
 .te-menu-disclaimer p{margin:0;color:#685675;font-size:12px;line-height:1.9}
 .te-menu-actions{display:flex;justify-content:center;gap:12px;margin-top:34px}
-.te-menu-actions a{padding:11px 20px;border:1px solid #cfc0d9;border-radius:999px;color:#43235a;text-decoration:none;font-size:13px;font-weight:700;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
-.te-menu-actions a:hover,.te-menu-actions a:focus{background:#f6f0fa;box-shadow:0 8px 22px rgba(58,24,84,.08);transform:translateY(-1px)}
+.te-menu-actions a,.te-menu-actions button{padding:11px 20px;border:1px solid #cfc0d9;border-radius:999px;color:#43235a;text-decoration:none;font-size:13px;font-weight:700;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.te-menu-actions a:hover,.te-menu-actions a:focus,.te-menu-actions button:hover,.te-menu-actions button:focus{background:#f6f0fa;box-shadow:0 8px 22px rgba(58,24,84,.08);transform:translateY(-1px)}
 .te-menu-actions .primary{background:#3a1854;border-color:#3a1854;color:#fff}.te-menu-actions .primary:hover,.te-menu-actions .primary:focus{background:#4a2366}
 @media(max-width:700px){
   .te-ending-shell{width:min(100% - 20px,900px);padding:38px 0 40px}.te-ending-mast{padding-bottom:23px}.te-ending-mast h1{font-size:34px;letter-spacing:.1em}.te-ending-cn{font-size:12px}.te-pending-inner{margin-top:18px;padding:30px 23px 34px}.te-pending-inner:before{inset:9px}.te-pending-inner p{font-size:15px;line-height:1.95;margin-bottom:20px}.te-mail-entry{padding:16px;margin-top:28px}.te-mail-entry b{font-size:15px}.te-ending-mark{width:108px;height:108px}.te-ending-mark span{font-size:17px}
   .te-mail-window{width:100%;min-height:100vh;margin:0;border:0;border-radius:0}.te-mail-layout{display:block;min-height:calc(100vh - 52px)}.te-mail-sidebar{display:none}.te-mail-message{max-width:none;padding:30px 20px 48px}.te-mail-message h1{font-size:25px}.te-mail-body p{font-size:14px;line-height:1.9}.te-mail-actions{flex-direction:column}.te-mail-actions a{text-align:center;padding:12px 16px}
-  .te-menu-shell{width:min(100% - 24px,880px);padding:42px 0 34px}.te-menu-head{padding:0 12px 26px}.te-menu-head h1{font-size:30px}.te-menu-card{padding:30px 12px}.te-menu-card>p{font-size:15px;line-height:1.95}.te-menu-disclaimer{padding:18px}.te-menu-actions{flex-direction:column}.te-menu-actions a{text-align:center;padding:12px}
+  .te-menu-shell{width:min(100% - 24px,880px);padding:42px 0 34px}.te-menu-head{padding:0 12px 26px}.te-menu-head h1{font-size:30px}.te-menu-card{padding:30px 12px}.te-menu-card>p{font-size:15px;line-height:1.95}.te-menu-disclaimer{padding:18px}.te-menu-actions{flex-direction:column}.te-menu-actions a,.te-menu-actions button{text-align:center;padding:12px}
 }
 </style>
 <script id="v151-true-ending-script">
 (function(){
   function resetEndingScroll(){
+    if(window.jtGameSave&&window.jtGameSave.restoring)return;
     var hash=location.hash;
     if(hash!=='#trueEndingPending'&&hash!=='#trueEndingMail'&&hash!=='#trueEndingMenu')return;
     var page=document.querySelector(hash);
@@ -4705,11 +4810,10 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   var home=document.getElementById('trueEndingMenuHomeBtn');
   if(home)home.addEventListener('click',function(e){
     e.preventDefault();
-    var cleanUrl=location.href.split('#')[0];
-    location.href=cleanUrl;
+    if(window.jtGameSave)window.jtGameSave.restart();
   },false);
   window.addEventListener('hashchange',function(){setTimeout(resetEndingScroll,0);},false);
-  window.addEventListener('pageshow',function(e){if(!e.persisted)resetEndingScroll();},false);
+  window.addEventListener('pageshow',function(e){if(!e.persisted&&!(window.jtGameSave&&window.jtGameSave.snapshot))resetEndingScroll();},false);
 })();
 </script>
 
@@ -4724,6 +4828,12 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   var msg=document.getElementById('jtgovSubmitMessage');
   var submit=document.getElementById('jtgovSubmitComplaint');
   var timer=null;
+  var saveManager=window.jtGameSave;
+  var savedReport=saveManager&&saveManager.getState('report');
+  var pendingDue=Number(savedReport&&savedReport.due)||0;
+  function isRestoring(){return !!(saveManager&&saveManager.restoring);}
+  function saveSoon(){if(saveManager)saveManager.saveSoon();}
+  if(saveManager)saveManager.register('report',function(){return {due:pendingDue};});
   var store={reporter:'v142_jt_report_reporter',targets:'v142_jt_report_targets',reason:'v142_jt_report_reason',date:'v142_jt_report_date'};
 
   function clean(v){return String(v||'').toLowerCase().replace(/[，。！？、；：,.!?;:\s“”‘’'"（）()【】\[\]《》<>]/g,'');}
@@ -4753,6 +4863,8 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     }catch(e){}
   }
   function resetReportFeedback(){
+    pendingDue=0;
+    saveSoon();
     if(timer){clearTimeout(timer);timer=null;}
     if(msg){msg.textContent='';msg.className='jtgov-submitmsg';}
     if(submit){submit.disabled=false;submit.textContent='提交举报';}
@@ -4784,19 +4896,30 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     return /^(?:雷青泽[\s,，、]*(?:[和与][\s,，、]*)?杨振海|杨振海[\s,，、]*(?:[和与][\s,，、]*)?雷青泽)$/.test(s);
   }
   function fail(){
+    pendingDue=0;
+    saveSoon();
     if(timer){clearTimeout(timer);timer=null;}
     if(msg){msg.textContent='举报失败，请重新填写';msg.className='jtgov-submitmsg fail';}
     if(submit){submit.disabled=false;submit.textContent='提交举报';}
   }
-  function success(){
+  function resumeSuccess(){
+    if(isRestoring()||!pendingDue)return;
+    if(location.hash!=='#jtgovReportForm'){pendingDue=0;saveSoon();return;}
     if(msg){msg.textContent='举报成功';msg.className='jtgov-submitmsg ok';}
     if(submit){submit.disabled=true;submit.textContent='已提交';}
-    if(timer){clearTimeout(timer);}
+    if(timer)clearTimeout(timer);
     timer=setTimeout(function(){
       timer=null;
+      pendingDue=0;
       /* A later Back action takes precedence over this pending transition. */
       if(location.hash==='#jtgovReportForm')location.hash='trueEndingPending';
-    },3000);
+      saveSoon();
+    },Math.max(0,pendingDue-Date.now()));
+  }
+  function success(){
+    pendingDue=Date.now()+3000;
+    resumeSuccess();
+    saveSoon();
   }
   if(openBtn)openBtn.addEventListener('click',function(){resetReportFeedback();location.hash='jtgovReportForm';},false);
   if(form){
@@ -4812,11 +4935,13 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     },false);
   }
   window.addEventListener('hashchange',function(){
+    if(isRestoring())return;
     if(location.hash==='#jtgovReportForm')resetReportFeedback();
-    else if(timer){clearTimeout(timer);timer=null;}
+    else if(timer||pendingDue){if(timer)clearTimeout(timer);timer=null;pendingDue=0;saveSoon();}
   },false);
-  // Start a new playthrough cleanly; in-game navigation keeps the current draft.
-  resetReportForm();
+  // A saved playthrough restores its draft and pending successful submission.
+  if(!isRestoring())resetReportForm();
+  window.addEventListener('jt:game-restored',resumeSuccess,false);
 })();
 </script>
 <script id="v141-government-route-script">
@@ -4872,6 +4997,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   }
 
   function resetAllSearchState(){
+    if(window.jtGameSave&&window.jtGameSave.restoring)return;
     clearSearches(document);
     clearSearchExtras();
   }
@@ -4886,7 +5012,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 
   /* 成功搜索会切换 hash；在结果页出现前清掉旧词，返回时就是干净的新搜索页。 */
   window.addEventListener('hashchange',function(){setTimeout(resetAllSearchState,0);},false);
-  window.addEventListener('pageshow',function(e){if(!e.persisted)resetAllSearchState();},false);
+  window.addEventListener('pageshow',function(e){if(!e.persisted&&!(window.jtGameSave&&window.jtGameSave.snapshot))resetAllSearchState();},false);
   document.addEventListener('DOMContentLoaded',resetAllSearchState,false);
 
   /* 两台电脑的浏览器窗口使用单选按钮开关，没有 hash 变化，因此单独监听。 */
@@ -5263,8 +5389,13 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 
 <script id="v156-calendar-script">
 (function(){
- document.querySelectorAll('.game-calendar').forEach(function(root){
-  var year=2026,month=5;
+ document.querySelectorAll('.game-calendar').forEach(function(root,index){
+  var saveManager=window.jtGameSave;
+  var stateName='calendar'+index;
+  var savedCalendar=saveManager&&saveManager.getState(stateName);
+  var year=savedCalendar&&Number.isInteger(savedCalendar.year)?savedCalendar.year:2026;
+  var month=savedCalendar&&Number.isInteger(savedCalendar.month)&&savedCalendar.month>=0&&savedCalendar.month<=11?savedCalendar.month:5;
+  if(saveManager)saveManager.register(stateName,function(){return {year:year,month:month};});
   root.innerHTML='<aside class="cal-sidebar"><strong>日历</strong><p>2026年6月10日 · 星期三</p><div class="cal-list"><div><i></i>个人</div><div><i></i>日历</div></div></aside><main class="cal-main"><div class="cal-toolbar"><div class="cal-heading"></div><div class="cal-controls"><button type="button" data-cal="prev" aria-label="上个月">‹</button><button type="button" data-cal="today">今天</button><button type="button" data-cal="next" aria-label="下个月">›</button></div></div><div class="cal-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div><div class="cal-grid"></div><div class="cal-foot">今天：2026年6月10日　星期三</div></main>';
   function render(){
    root.querySelector('.cal-heading').textContent=year+'年 '+(month+1)+'月';
@@ -5274,6 +5405,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     html+='<div class="cal-day'+(i%7>=5?' weekend':'')+(date.getMonth()!==month?' muted':'')+(today?' today':'')+'"'+(today?' aria-current="date"':'')+'><span>'+date.getDate()+'</span></div>';
    }
    root.querySelector('.cal-grid').innerHTML=html;
+   if(saveManager)saveManager.saveSoon();
   }
   root.addEventListener('click',function(e){var button=e.target.closest('[data-cal]');if(!button)return;e.preventDefault();var action=button.dataset.cal;if(action==='today'){year=2026;month=5;}else{month+=action==='prev'?-1:1;if(month<0){month=11;year--;}if(month>11){month=0;year++;}}render();});
   document.addEventListener('change',function(e){if(e.target.id==='app-calendar'||e.target.id==='lts-app-calendar'){year=2026;month=5;render();}});
@@ -5283,9 +5415,12 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 </script>
 <script id="v163-record-return">
 (function(){
-  var internal=false;
+  var saveManager=window.jtGameSave;
+  var savedReturn=saveManager&&saveManager.getState('recordReturn');
+  var internal=!!(savedReturn&&savedReturn.internal);
+  if(saveManager)saveManager.register('recordReturn',function(){return {internal:internal};});
   var back=document.querySelector('#mudanLTSRecord .mudan-back');
-  function update(){if(back){back.href=internal?'#mudanAdminPortal':'#mudanSearchLTS';back.textContent=internal?'‹ 返回内部主页':'‹ 返回搜索结果';}}
+  function update(){if(back){back.href=internal?'#mudanAdminPortal':'#mudanSearchLTS';back.textContent=internal?'‹ 返回内部主页':'‹ 返回搜索结果';}if(saveManager)saveManager.saveSoon();}
   document.addEventListener('click',function(e){
     var link=e.target.closest('a[href="#mudanLTSRecord"]');
     if(link){internal=!!link.closest('.mudan-admin');update();}
@@ -5461,6 +5596,88 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     img.addEventListener('error',useOriginal);
     if(img.complete&&img.naturalWidth===0)useOriginal();
   });
+})();
+</script>
+<style id="jt-restart-button-style">
+.te-menu-actions button{font-family:inherit;cursor:pointer;line-height:inherit}
+.te-restart-note{text-align:center;color:#786784;font-size:12px;line-height:1.7;margin:14px 0 0}
+</style>
+<script id="jt-game-save-ui">
+(function(){
+  'use strict';
+  var api=window.jtGameSave;if(!api)return;
+  var snapshot=api.snapshot, restored=false, scrollRecovery=!!snapshot, scrollPositions={};
+  var controls=Array.prototype.slice.call(document.querySelectorAll('input,textarea,select'));
+  var details=Array.prototype.slice.call(document.querySelectorAll('details'));
+  var panels=Array.prototype.slice.call(document.querySelectorAll('#gameOpeningPage,#mailWindow,#mailWindow .mailpage,#storyMailPopup,#yangMailToast,#yangChoiceToast,#badEndingScreen,#beNewsToast,#beEasterNews,#jgaYangLuNoteContent,#jgaYangLuNoteError'));
+  var links=Array.prototype.slice.call(document.querySelectorAll('#mudanZhang .mudan-back,#mudanLTSRecord .mudan-back'));
+  var scrollables=Array.prototype.slice.call(document.querySelectorAll('[id],.mailview,.mails,.messages,.lts-wx-scroll,.lts-mail-scroll,.lts-album-body,.lts-file-paper,.jtcode-wrap,.mudan-wrap,.admin-main,.lts-browser-page,.sidebar,.chats,.browserbody'));
+  function key(el){
+    var path=[];
+    while(el&&el!==document.body&&!el.id){var parent=el.parentElement;if(!parent)return '';path.unshift(Array.prototype.indexOf.call(parent.children,el));el=parent;}
+    return (el&&el.id||'')+'|'+path.join('.');
+  }
+  var nodes={};controls.concat(details,panels,links,scrollables).forEach(function(el){nodes[key(el)]=el;});
+  function gatherControls(){return controls.filter(function(el){return el.type!=='file';}).map(function(el){return {key:key(el),tag:el.tagName,type:el.type,value:el.value,checked:!!el.checked};});}
+  function gatherPanels(){return panels.map(function(el){return {key:key(el),show:el.classList.contains('show'),opening:el.classList.contains('is-visible'),display:el.style.display,aria:el.getAttribute('aria-hidden')};});}
+  function collectScroll(){
+    scrollables.forEach(function(el){if(el.clientHeight>0&&el.scrollHeight>el.clientHeight&&(!scrollRecovery||!scrollPositions[key(el)])){scrollPositions[key(el)]={top:el.scrollTop,left:el.scrollLeft};}});
+    return scrollPositions;
+  }
+  api.capture=function(){
+    return {
+      controls:gatherControls(),panels:gatherPanels(),scroll:collectScroll(),
+      details:details.map(function(el){return {key:key(el),open:el.open};}),
+      links:links.map(function(el){return {key:key(el),href:el.getAttribute('href'),text:el.textContent};}),
+      unread:['mailItemNotebookPages','mailItemYangThreat'].filter(function(id){var el=document.getElementById(id);return el&&el.classList.contains('tc-newmail-unread');}),
+      adminResult:!!(document.getElementById('adminSearchResults')||{}).textContent
+    };
+  };
+  function applyScroll(){
+    if(!scrollRecovery)return;
+    Object.keys(scrollPositions).forEach(function(k){var el=nodes[k],pos=scrollPositions[k];if(el&&el.clientHeight>0&&pos){el.scrollTop=Math.max(0,Number(pos.top)||0);el.scrollLeft=Math.max(0,Number(pos.left)||0);}});
+  }
+  function syncMail(){
+    function flag(k){try{if(sessionStorage.getItem(k)==='1')return true;}catch(e){}try{if(localStorage.getItem(k)==='1')return true;}catch(e){}return (window.name||'').split('|').indexOf(k+'=1')!==-1;}
+    var first=flag('v142_jt_notebook_mail_available'),pages=flag('v142_jt_notebook_pages_available'),threat=flag('v142_jt_yang_threat_mail_available');
+    [['mailItemNotebook',first],['mailItemNotebookPages',pages],['mailItemYangThreat',threat]].forEach(function(pair){var el=document.getElementById(pair[0]);if(el)el.classList.toggle('mail-hidden',!pair[1]);});
+    var n=threat?6:pages?5:first?4:3,count=document.getElementById('inboxCount'),head=document.getElementById('inboxHead');
+    if(count)count.textContent=String(n);if(head)head.textContent='收件箱 · '+n+' 封邮件';
+  }
+  function restore(){
+    if(restored)return;restored=true;
+    if(snapshot){
+      var ui=snapshot.ui;
+      (ui.controls||[]).forEach(function(s){var el=nodes[s.key];if(!el||el.tagName!==s.tag||el.type!==s.type||el.type==='file')return;el.value=String(s.value||'');if(el.type==='radio'||el.type==='checkbox')el.checked=!!s.checked;});
+      (ui.panels||[]).forEach(function(s){var el=nodes[s.key];if(!el)return;el.classList.toggle('show',!!s.show);el.classList.toggle('is-visible',!!s.opening);if(['','none','block','flex','grid'].indexOf(s.display)>=0)el.style.display=s.display;if(s.aria==='true'||s.aria==='false')el.setAttribute('aria-hidden',s.aria);});
+      (ui.details||[]).forEach(function(s){var el=nodes[s.key];if(el)el.open=!!s.open;});
+      (ui.links||[]).forEach(function(s){var el=nodes[s.key];if(el&&/^#[A-Za-z][\w-]*$/.test(s.href)){el.setAttribute('href',s.href);el.textContent=String(s.text||'');}});
+      ['mailItemNotebookPages','mailItemYangThreat'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('tc-newmail-unread',(ui.unread||[]).indexOf(id)>=0);});
+      scrollPositions=ui.scroll&&typeof ui.scroll==='object'?ui.scroll:{};
+      /* Regenerate trusted search results; never restore arbitrary HTML from storage. */
+      var input=document.getElementById('adminSearchInput'),form=input&&input.closest('form');
+      if(ui.adminResult&&input&&input.value&&form){form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));}
+      syncMail();
+    }
+    api.restoring=false;
+    window.dispatchEvent(new CustomEvent('jt:game-restored'));
+    requestAnimationFrame(function(){applyScroll();api.saveSoon();});
+  }
+  function userMoved(){scrollRecovery=false;}
+  ['pointerdown','touchstart','wheel','keydown'].forEach(function(name){document.addEventListener(name,userMoved,{passive:true,capture:true});});
+  document.addEventListener('load',function(e){if(e.target&&e.target.tagName==='IMG'&&scrollRecovery)requestAnimationFrame(applyScroll);},true);
+  document.addEventListener('scroll',function(e){if(e.target&&e.target.nodeType===1&&e.target.clientHeight>0&&(!scrollRecovery||!scrollPositions[key(e.target)])){scrollPositions[key(e.target)]={top:e.target.scrollTop,left:e.target.scrollLeft};}api.saveSoon();},{passive:true,capture:true});
+  ['input','change','click','toggle'].forEach(function(name){document.addEventListener(name,function(){api.saveSoon();},true);});
+  window.addEventListener('hashchange',function(){scrollRecovery=false;api.saveSoon();},false);
+  window.addEventListener('pageshow',function(e){if(!e.persisted){restore();requestAnimationFrame(applyScroll);}api.saveSoon();},false);
+  document.addEventListener('DOMContentLoaded',restore,false);
+  if(document.readyState!=='loading')restore();
+  /* Observe only gameplay panels, avoiding image attributes and full-page scanning. */
+  if('MutationObserver' in window){
+    var observer=new MutationObserver(function(){api.saveSoon();});
+    panels.forEach(function(el){observer.observe(el,{attributes:true,attributeFilter:['class','style','aria-hidden']});});
+    ['mailItemNotebook','mailItemNotebookPages','mailItemYangThreat','jtgovSubmitMessage'].forEach(function(id){var el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,childList:true,characterData:true,subtree:true});});
+  }
 })();
 </script>
 </body></html>
