@@ -4782,7 +4782,10 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     var cover=ordered(s,[['杨振海'],['得知','知道','知晓','了解'],['事件的来龙去脉','事件来龙去脉','来龙去脉','真相','内情','经过'],['保护伞'],['滥用职权','滥用权力'],['包庇','袒护','掩盖','隐瞒'],['雷青泽']],180);
     return accused&&storyDate(rawText)&&victim&&provocation&&treatmentWord&&treatment&&motive&&cover;
   }
-  function targetsOK(v){var s=clean(v);return s.indexOf('杨振海')>=0&&s.indexOf('雷青泽')>=0;}
+  function targetsOK(v){
+    var s=String(v||'').trim();
+    return /^(?:雷青泽[\s,，、]*(?:[和与][\s,，、]*)?杨振海|杨振海[\s,，、]*(?:[和与][\s,，、]*)?雷青泽)$/.test(s);
+  }
   function fail(){
     if(timer){clearTimeout(timer);timer=null;}
     if(msg){msg.textContent='举报失败，请重新填写';msg.className='jtgov-submitmsg fail';}
