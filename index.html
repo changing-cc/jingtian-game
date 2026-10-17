@@ -3132,7 +3132,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
     if(inner){try{inner.scrollTop=0;}catch(e){}}
   }
   window.addEventListener('hashchange',function(){requestAnimationFrame(stabilizeRoute);});
-  window.addEventListener('pageshow',stabilizeRoute);
+  window.addEventListener('pageshow',function(e){if(!e.persisted)stabilizeRoute();});
   document.addEventListener('DOMContentLoaded',stabilizeRoute);
 })();
 </script>
@@ -3616,7 +3616,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 </section>
 <script id="v148-mail-run-reset">
 (function(){
-  /* 一次打开 HTML 就是一局：刷新、重新打开或从浏览器缓存返回时，邮件剧情重新开始。 */
+  /* 新载入页面时重新开局；从浏览器缓存恢复时保留本局，不主动刷新。 */
   var keys=[
     'v142_jt_notebook_mail_available',
     'v142_jt_notebook_pages_available',
@@ -3637,9 +3637,6 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     }catch(e){}
   }
   clearRunState();
-  window.addEventListener('pageshow',function(e){
-    if(e.persisted){ location.reload(); }
-  },false);
 })();
 </script>
 <script id="v148-lts-login-no-reload">
@@ -4712,7 +4709,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     location.href=cleanUrl;
   },false);
   window.addEventListener('hashchange',function(){setTimeout(resetEndingScroll,0);},false);
-  window.addEventListener('pageshow',resetEndingScroll,false);
+  window.addEventListener('pageshow',function(e){if(!e.persisted)resetEndingScroll();},false);
 })();
 </script>
 
@@ -4889,7 +4886,7 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
 
   /* 成功搜索会切换 hash；在结果页出现前清掉旧词，返回时就是干净的新搜索页。 */
   window.addEventListener('hashchange',function(){setTimeout(resetAllSearchState,0);},false);
-  window.addEventListener('pageshow',resetAllSearchState,false);
+  window.addEventListener('pageshow',function(e){if(!e.persisted)resetAllSearchState();},false);
   document.addEventListener('DOMContentLoaded',resetAllSearchState,false);
 
   /* 两台电脑的浏览器窗口使用单选按钮开关，没有 hash 变化，因此单独监听。 */
