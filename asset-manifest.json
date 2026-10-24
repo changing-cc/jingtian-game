@@ -2,17 +2,17 @@
   "source": "game_v170(1).html",
   "source_bytes": 29248412,
   "source_sha256": "4a6529d7fa5862605fb93ece6638e5a446eeb41d9bc66e445b6f405523066315",
-  "data_uri_occurrences": 289,
+  "data_uri_occurrences": 288,
   "occurrences_by_mime": {
     "audio/mpeg": 2,
     "image/jpeg": 242,
     "image/png": 38,
-    "image/svg+xml": 7
+    "image/svg+xml": 6
   },
   "mime_mismatches": {
     "image/png -> image/jpeg": 10
   },
-  "unique_assets": 62,
+  "unique_assets": 61,
   "assets": [
     {
       "file": "assets/audio-f2bb331d5ee19119451062dbc8436ca9cd4fb7ba83b77cf008a41077ecb2fe18.mp3",
@@ -41,13 +41,6 @@
       "bytes": 7228,
       "sha256": "0c9233bf7003b44e8bab88377a18622bb7d5b7348b7457da46dbf678444559b3",
       "occurrences": 71
-    },
-    {
-      "file": "assets/image-0f08fdbf1485f9eb3bbc8028c2d417a1f487b977b6e2eec6912ba7deb32852d3.svg",
-      "mime": "image/svg+xml",
-      "bytes": 2266,
-      "sha256": "0f08fdbf1485f9eb3bbc8028c2d417a1f487b977b6e2eec6912ba7deb32852d3",
-      "occurrences": 1
     },
     {
       "file": "assets/image-104c221a619deca17a83fd7d1fbc033729aa11b7570f174d43df8612f5c27b4c.jpg",
