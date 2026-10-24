@@ -350,7 +350,8 @@ html.jt-restoring::after{content:"正在恢复上次进度…";position:fixed;in
 #adminLog10 .admin-main{padding:0;min-height:calc(100vh - 58px)}
 #adminLog10 .admin-log-page{max-width:none;width:100%;min-height:calc(100vh - 58px);margin:0;border-radius:0;border:0;background:#0d1117;padding:22px 24px calc(42px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
 #adminLog10 .admin-log-body{flex:1;font-size:14px;line-height:2.05;max-width:980px;width:100%;margin:0 auto}
-#adminLog10 .admin-log-back,#adminLog10 .admin-log-date-big,#adminLog10 h2{max-width:980px;width:100%;margin-left:auto;margin-right:auto}
+#adminLog10 .admin-log-date-big,#adminLog10 h2{max-width:980px;width:100%;margin-left:auto;margin-right:auto}
+#adminLog10 .admin-log-back{align-self:flex-start;justify-content:flex-start;flex-shrink:0;width:auto;margin-left:0;margin-right:0}
 @media(max-width:760px){#adminLog10 .admin-main{padding:0;min-height:calc(100vh - 58px)}#adminLog10 .admin-log-page{min-height:calc(100vh - 58px);padding:18px 16px calc(34px + env(safe-area-inset-bottom))}#adminLog10 .admin-log-body{font-size:14px;line-height:1.95}#adminLog10 .admin-log-back{margin-bottom:20px}}
 
 
@@ -1009,7 +1010,14 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 .jga-story-date{font-size:12px;color:#8a95a5;line-height:1.5}
 .jga-story-row a{color:#143a72;text-decoration:none;font-size:18px;font-weight:800;line-height:1.45}
 .jga-story-row p{margin:7px 0 0;font-size:14px;line-height:1.75;color:#5b687c}
-.jga-bottom-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:22px}
+.jga-home-main{display:grid;gap:22px;min-width:0}
+.jga-home-contacts{margin-top:22px}
+.jga-contact-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;color:#5b687c;text-align:left}
+.jga-contact-table th,.jga-contact-table td{padding:15px 14px;border-bottom:1px solid #e7ebef;vertical-align:top;line-height:1.6;overflow-wrap:anywhere}
+.jga-contact-table th{background:#f5f7fa;color:#22395d;font-weight:700}
+.jga-contact-table th:nth-child(1){width:32%}
+.jga-contact-table th:nth-child(2){width:16%}
+.jga-contact-table tbody tr:last-child td{border-bottom:none}
 .jga-gov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .jga-gov-card{display:block;padding:18px 16px;border:1px solid #e2e7ee;background:#fafbfc;color:#213a63;text-decoration:none;line-height:1.6;font-weight:700;text-align:center}
 .jga-gov-card small{display:block;margin-top:6px;font-size:12px;font-weight:500;color:#758399}
@@ -1020,13 +1028,16 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 .jga-home-linkmore{display:inline-block;margin-top:14px;color:#8d1f2d;text-decoration:none;font-size:13px;font-weight:700}
 @media(max-width:900px){
   .jga-home-layout{grid-template-columns:1fr}
-  .jga-bottom-grid{grid-template-columns:1fr}
 }
 @media(max-width:680px){
   .jga-story-row{grid-template-columns:1fr;gap:8px}
   .jga-topic-item,.jga-notice-item{grid-template-columns:1fr;gap:6px}
   .jga-gov-grid{grid-template-columns:1fr}
   .jga-quick-list{grid-template-columns:1fr}
+  .jga-contact-table{font-size:12px}
+  .jga-contact-table th,.jga-contact-table td{padding:12px 6px}
+  .jga-contact-table th:nth-child(1){width:30%}
+  .jga-contact-table th:nth-child(2){width:18%}
 }
 </style>
 <style id="jga-yang-v82-style">
@@ -1197,6 +1208,8 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 </style>
 <style id="v156-desktops-calendar">
 .desktop{background:#111 url('assets/image-8cedfe43a19ed6116e2aebbe7fd34405fb14d0204cbc41821ac6e54be48cd8a0.jpg') center/cover no-repeat!important}
+#luoxinReturnLts[hidden]{display:none!important}
+#luoxinReturnLts:not([hidden])~.brand{top:max(100px,10vh)}
 #ltsDesktop{background:#000 url('assets/image-d4b1fb9b233f4554e5891807ec48d9f3de963e4895ffbd79bc9073e6c94799b3.jpg') center/cover no-repeat!important}
 .calendar-desktop-icon{cursor:pointer}
 .calendar-tile{background:#fff!important;color:#252525!important;display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start!important;overflow:hidden;gap:0!important}
@@ -1356,6 +1369,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <input class="ui-state" id="wechat-friend" name="wechat-chat" type="radio"/>
 <div class="desktop">
 <div class="topbar"><div class="l"><span class="apple">●</span><span class="appname"></span><span>文件</span><span>编辑</span><span>显示</span></div><div class="r"><span>⌁</span><span>100%</span><span>6月10日 周三 19:47</span></div></div>
+<a class="lts-backbtn" id="luoxinReturnLts" href="#ltsDesktop" data-jt-nav="back" hidden>‹ 返回陆添时电脑</a>
 <div class="brand"><small>JINGTIAN · PERSONAL TERMINAL</small><h1>罗鑫</h1><p>京田市公安局 · 本地用户</p></div>
 <div class="icons">
 <label class="app-icon" for="app-mail"><span class="tile mailtile">✉</span><span>邮箱</span></label>
@@ -1408,7 +1422,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 
 前几天搬家的时候，我找到一个旧电脑和一个上了密码锁的笔记本，上面写着“陆添时”，我感觉应该是她的。可是家里人几乎禁止我提起她的名字。最开始我想问，但我父母的眼神很奇怪，我也不敢继续问下去。
 
-从那之后，我父母为了让我好好读高中，考大学，基本上不让我上网。直到前几天，我刚高考完。
+从那之后，我父母为了让我好好读高中，考大学，基本上不让我上网。直到前几天，<strong>我刚高考完</strong>。
 
 我冥冥之中感觉这个姐姐很重要，我也想查一下。前几天我去市公安局，一提到陆添时，几乎没人理我。我偷偷听到他们说罗鑫也很在乎这个人，我便从公安局网站上查到你的邮箱。
 
@@ -1420,6 +1434,8 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 
 （备注：在浏览器搜索陆添时电脑，即可进入陆添时电脑界面）</div></div>
 <div class="mailpage" id="ptianchennote"><label class="back" for="mail-default" data-jt-nav="back" role="button" tabindex="0" aria-label="收件箱">‹ 收件箱</label><div class="msubject">姐姐的笔记本</div><div class="meta"><b>发件人</b><span>陆添辰 &lt;tianchen1201@mail.com&gt;</span><b>收件人</b><span>罗鑫 &lt;luoxin0812@mail.com&gt;</span><b>时间</b><span>2026年6月10日 22:07</span></div><div aria-live="polite" class="tc-passbox" id="tcPasswordBox"><div class="tc-pass-title">回复陆添辰 · 三位数密码</div><form autocomplete="off" class="tc-pass-row" id="tcPasswordForm"><input aria-label="三位数密码" id="tcPasswordInput" inputmode="numeric" maxlength="3" pattern="[0-9]{3}" placeholder="输入密码" type="text"/><button type="submit">发送</button></form><div class="tc-pass-error" id="tcPasswordError"></div></div><div class="text">罗警官，我发现我没有把姐姐的密码笔记本邮寄给你，实在不好意思。我给你拍一个笔记本的照片，上面有一个纸条，不知道与密码有没有关系。我相信你查了很多，可以结合纸条内容破解这个密码了吧。密码是三位数，你可以发给我密码，我打开之后拍照发你里面的内容。麻烦了！
+
+（纸条上的第一个字似乎被划掉了，你可以查一下究竟是什么字）
 
 对了，她还有个博客，搜一下“陆添时博客”应该就能出来。至于账户。。。你试一下她电脑账户吧，密码我不太清楚。
 
@@ -1461,7 +1477,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 </div></section>
 <section class="conversation" id="conv-mom"><div class="convhead"><label class="convback" for="wechat-none" data-jt-nav="back" role="button" tabindex="0" aria-label="返回会话列表">‹</label>妈</div><div class="messages">
 <div class="stamp">6月1日 20:14</div>
-<div class="msg"><div class="miniav avatar-img"><img alt="妈妈头像" src="assets/image-94367aaac6c53cfbfcc88790cb6e82f224d9e3f02a533ed781f40331f61378d6.jpg"/></div><div class="bubble">晚上回来吃吗？我炖了排骨。</div></div>
+<div class="msg"><div class="miniav avatar-img"><img alt="妈妈头像" src="assets/image-94367aaac6c53cfbfcc88790cb6e82f224d9e3f02a533ed781f40331f61378d6.jpg"/></div><div class="bubble">晚上回来吃吗？我包了饺子。</div></div>
 <div class="msg me-msg"><div class="bubble">不一定，今天又要补材料。</div><div class="miniav avatar-img"><img alt="罗鑫头像" src="assets/image-f10e99491fe2495eedbd3097f0ce5e2a9318af0adf366cb20a589149bbe121d8.jpg"/></div></div>
 <div class="msg"><div class="miniav avatar-img"><img alt="妈妈头像" src="assets/image-94367aaac6c53cfbfcc88790cb6e82f224d9e3f02a533ed781f40331f61378d6.jpg"/></div><div class="bubble">刚上班就天天这么晚？你们单位没人了啊。</div></div>
 <div class="msg me-msg"><div class="bubble">人很多，案子轮不到我。</div><div class="miniav avatar-img"><img alt="罗鑫头像" src="assets/image-f10e99491fe2495eedbd3097f0ce5e2a9318af0adf366cb20a589149bbe121d8.jpg"/></div></div>
@@ -1662,6 +1678,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
     function go(e){
       if(e){e.preventDefault();e.stopPropagation();}
       var q=norm(i.value), id=routes[q];
+      if(!id&&/前额叶.*肿瘤/.test(q))id='frontalTumorSearchResult';
       i.setCustomValidity('');
       if(id){
         try{i.blur();}catch(_e){}
@@ -2466,7 +2483,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <div class="mudan-record-section"><h3>入院记录</h3><p>患者由家属陪同入院。入院时情绪紧张，对住院安排明显抵触，多次要求离院，对医护询问配合欠佳。查体及精神状态检查过程中回答简短，部分问题拒绝作答，并反复表示“自己没有病”“不需要住院”。</p><p>家属述患者近数月情绪变化明显，易激惹，偶有无故发脾气、摔砸物品及与家人争执行为；近期交流减少，情绪波动加重，家属认为其行为较既往存在明显异常。</p><div class="mudan-record-note">病史资料主要由陪同家属提供。患者本人对部分情况否认或拒绝进一步说明。</div></div>
 <div class="mudan-record-section"><h3>精神状态检查</h3><ul><li>意识清楚，定向力基本完整。</li><li>接触被动，合作程度较差，部分检查内容拒绝配合。</li><li>情绪紧张、易激惹，对住院及家属安排存在明显抵触。</li><li>谈话过程中防御性较强，对自身异常表现缺乏认可。</li><li>综合家属陈述及入院观察，考虑存在精神病性症状可能。</li></ul></div>
 <div class="mudan-record-section"><h3>初步诊断</h3><div class="mudan-record-dx">精神分裂症</div><p>诊断意见：结合家属提供的病史、近期行为改变、情绪及交流状态，以及入院后的观察表现，初步诊断为精神分裂症，建议住院继续观察并进行系统治疗。</p></div>
-<div class="mudan-record-section"><h3>治疗计划</h3><table class="mudan-order-table"><thead><tr><th>项目</th><th>医嘱 / 计划</th><th>备注</th></tr></thead><tbody><tr><td>药物治疗</td><td>奥氮平口服，依据症状与耐受情况调整</td><td>抗精神病治疗</td></tr><tr><td>对症治疗</td><td>必要时短期使用镇静、抗焦虑药物</td><td>按需医嘱</td></tr><tr><td>住院观察</td><td>封闭病区继续观察情绪、行为及治疗配合情况</td><td>加强巡视</td></tr><tr><td>物理治疗</td><td><b>拟行 MECT（改良电抽搐治疗）</b></td><td>由雷青泽主任评估后安排</td></tr></tbody></table></div>
+<div class="mudan-record-section"><h3>治疗计划</h3><table class="mudan-order-table"><thead><tr><th>项目</th><th>医嘱 / 计划</th><th>备注</th></tr></thead><tbody><tr><td>药物治疗</td><td>奥氮平口服，依据症状与耐受情况调整</td><td>抗精神病治疗</td></tr><tr><td>对症治疗</td><td>必要时短期使用镇静、抗焦虑药物</td><td>按需医嘱</td></tr><tr><td>住院观察</td><td>封闭病区继续观察情绪、行为及治疗配合情况</td><td>加强巡视</td></tr><tr><td>物理治疗</td><td>拟行 MECT（改良电抽搐治疗）</td><td>由雷青泽主任评估后安排</td></tr></tbody></table></div>
 <div class="mudan-record-section"><h3>主治医师意见</h3><p>患者目前治疗配合度低，疾病认识不足，单纯口服药物治疗依从性预计欠佳。考虑症状进展及住院期管理需要，建议药物治疗基础上联合 MECT，尽快稳定精神行为症状。继续观察治疗反应并根据病情调整方案。</p><p style="margin-bottom:0;color:#7b858f">主治医师：雷青泽　　记录日期：2021年3月9日</p></div>
 </section>
 </div>
@@ -2479,7 +2496,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <section aria-label="张又英资料" class="mudan-site" id="mudanZhang">
 <div class="mudan-topbar"><a class="mudan-back" href="#mudanSearchZhang" data-jt-nav="back">‹ 返回搜索结果</a><div class="mudan-brand">牡丹精神疗养院<small>人员资料</small></div><div></div></div>
 <nav class="mudan-v2-nav"><div class="mudan-v2-navin"><a href="#mudanHome">首页</a><a href="#mudanAbout">医院介绍</a><a href="#mudanNews">新闻中心</a><a href="#mudanDoctors">医师介绍</a><a href="#mudanDepartments">科室介绍</a><a href="#mudanTreatments">治疗介绍</a><a href="#mudanContact">联系方式</a><a href="#mudanMy">我的</a></div></nav>
-<div class="mudan-wrap"><section class="mudan-pagebox"><div class="mudan-zhang-public"><div class="mudan-zhang-public-photo"><img alt="张又英" src="assets/image-d59fddcb6ac1c8c5ecf1915fd60cace0ed6ab10e652b4da26a1eef4cc389b36b.jpg"/></div><div class="mudan-zhang-public-copy"><h2>张又英</h2><div class="mudan-docrole-big">心理咨询师　·　<strong class="mudan-status-resigned">已辞职</strong></div><div class="mudan-profile-grid"><div class="k">出生日期</div><div>1988年4月12日</div><div class="k">专业方向</div><div>心理咨询 / 家属会谈</div><div class="k">原任职部门</div><div>心理治疗与康复中心</div><div class="k">离职日期</div><div>2021年5月5日</div></div><p>张又英，原牡丹精神疗养院心理咨询师，接受过系统的临床心理咨询与危机干预训练，主要负责住院患者个体心理咨询、家属沟通、情绪支持及康复阶段心理评估。</p><p>任职期间参与青少年与成年患者的支持性心理治疗，并协助精神科医师进行住院期心理状态观察、家庭关系评估及出院前适应性指导。擅长处理家庭冲突、应激反应、焦虑情绪及住院适应问题。</p><p>2021年5月5日因个人原因办理离职手续，此后不再承担本院临床及咨询工作。</p></div></div></section></div>
+<div class="mudan-wrap"><section class="mudan-pagebox"><div class="mudan-zhang-public"><div class="mudan-zhang-public-photo"><img alt="张又英" src="assets/image-d59fddcb6ac1c8c5ecf1915fd60cace0ed6ab10e652b4da26a1eef4cc389b36b.jpg"/></div><div class="mudan-zhang-public-copy"><h2>张又英</h2><div class="mudan-docrole-big">心理咨询师　·　<strong class="mudan-status-resigned">已辞职</strong></div><div class="mudan-profile-grid"><div class="k">出生日期</div><div>1988年4月12日</div><div class="k">专业方向</div><div>心理咨询 / 家属会谈</div><div class="k"><strong>原任职部门：</strong></div><div><strong>心理咨询科</strong></div><div class="k">离职日期</div><div>2021年5月5日</div></div><p>张又英，原牡丹精神疗养院心理咨询师，接受过系统的临床心理咨询与危机干预训练，主要负责住院患者个体心理咨询、家属沟通、情绪支持及康复阶段心理评估。</p><p>任职期间参与青少年与成年患者的支持性心理治疗，并协助精神科医师进行住院期心理状态观察、家庭关系评估及出院前适应性指导。擅长处理家庭冲突、应激反应、焦虑情绪及住院适应问题。</p><p>2021年5月5日因个人原因办理离职手续，此后不再承担本院临床及咨询工作。</p></div></div></section></div>
 </section>
 <section aria-label="医院介绍" class="mudan-site" id="mudanAbout"><header class="mudan-v2-head"><div class="mudan-v2-util"><a href="#mudanHome" data-jt-nav="back">‹ 返回首页</a><span>京田市精神卫生服务机构</span></div><div class="mudan-v2-brand"><img alt="牡丹精神疗养院 Logo" src="assets/image-b0bb1001663ebf95a598da63b35e528d40cb380aaa244c72c59fcef18a5e30ea.png"/><div class="mudan-v2-brandcopy"><b>牡丹精神疗养院</b><span>MUDAN MENTAL CARE CENTER</span><small>医院介绍</small></div></div><nav class="mudan-v2-nav"><div class="mudan-v2-navin">
 <a href="#mudanHome">首页</a><a href="#mudanAbout">医院介绍</a><a href="#mudanNews">新闻中心</a><a href="#mudanDoctors">医师介绍</a><a href="#mudanDepartments">科室介绍</a><a href="#mudanTreatments">治疗介绍</a><a href="#mudanContact">联系方式</a><a href="#mudanMy">我的</a>
@@ -2552,9 +2569,9 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <div class="mudan-dept"><h3>无抽搐电痉挛治疗科</h3><p>负责 MECT 相关评估、治疗流程协调及围治疗期观察工作。</p></div>
 <div class="mudan-dept"><h3>精神科急诊与住院部</h3><p>提供24小时精神科急诊评估、住院收治及急性期状态观察服务。</p></div>
 </div></div></main></section>
-<section aria-label="治疗介绍" class="mudan-site" id="mudanTreatments">
-<div class="mudan-topbar"><a class="mudan-back" href="#mudanHome" data-jt-nav="back">‹ 返回首页</a><div class="mudan-brand">牡丹精神疗养院<small>治疗介绍</small></div><div></div></div>
-<nav class="mudan-v2-nav"><div class="mudan-v2-navin"><a href="#mudanHome">首页</a><a href="#mudanAbout">医院介绍</a><a href="#mudanNews">新闻中心</a><a href="#mudanDoctors">医师介绍</a><a href="#mudanDepartments">科室介绍</a><a href="#mudanTreatments">治疗介绍</a><a href="#mudanContact">联系方式</a><a href="#mudanMy">我的</a></div></nav>
+<section aria-label="治疗介绍" class="mudan-site" id="mudanTreatments"><header class="mudan-v2-head"><div class="mudan-v2-util"><a href="#mudanHome" data-jt-nav="back">‹ 返回首页</a><span>京田市精神卫生服务机构</span></div><div class="mudan-v2-brand"><img alt="牡丹精神疗养院 Logo" src="assets/image-b0bb1001663ebf95a598da63b35e528d40cb380aaa244c72c59fcef18a5e30ea.png"/><div class="mudan-v2-brandcopy"><b>牡丹精神疗养院</b><span>MUDAN MENTAL CARE CENTER</span><small>治疗介绍</small></div></div></header><nav class="mudan-v2-nav"><div class="mudan-v2-navin">
+<a href="#mudanHome">首页</a><a href="#mudanAbout">医院介绍</a><a href="#mudanNews">新闻中心</a><a href="#mudanDoctors">医师介绍</a><a href="#mudanDepartments">科室介绍</a><a href="#mudanTreatments">治疗介绍</a><a href="#mudanContact">联系方式</a><a href="#mudanMy">我的</a>
+</div></nav>
 <div class="mudan-wrap"><section class="mudan-pagebox"><h2>治疗介绍</h2><div class="mudan-treatment"><h3>药物治疗</h3><p>精神科医师根据患者症状、病程、既往用药反应与住院观察结果制定个体化治疗方案，并定期评估疗效与不良反应。</p></div><div class="mudan-treatment"><h3>心理咨询</h3><p>通过个体咨询、支持性心理治疗及必要的家属会谈，帮助患者改善情绪表达、压力应对及家庭沟通。</p></div><div class="mudan-treatment"><h3>物理治疗：MECT</h3><p>MECT（改良电抽搐治疗）是在麻醉与肌松条件下实施的物理治疗方式。适用情况需由精神科医师结合病情进行评估，并依照院内流程完成风险告知与相关手续。</p></div></section></div>
 </section>
 <section aria-label="联系方式" class="mudan-site" id="mudanContact"><header class="mudan-v2-head"><div class="mudan-v2-util"><a href="#mudanHome" data-jt-nav="back">‹ 返回首页</a><span>京田市精神卫生服务机构</span></div><div class="mudan-v2-brand"><img alt="牡丹精神疗养院 Logo" src="assets/image-b0bb1001663ebf95a598da63b35e528d40cb380aaa244c72c59fcef18a5e30ea.png"/><div class="mudan-v2-brandcopy"><b>牡丹精神疗养院</b><span>MUDAN MENTAL CARE CENTER</span><small>联系方式</small></div></div><nav class="mudan-v2-nav"><div class="mudan-v2-navin">
@@ -2712,9 +2729,9 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 
 说起来，心理咨询还是那些老朽愿意用的方案。对于我来说，太陈旧了。不过是一些花拳绣腿，让过程变好看而已。倒是可以让他们做一些入院评估，打打下手。</div></article></main></section>
 <section aria-label="日志 05" class="mudan-admin" id="adminLog5"><header class="admin-top"><div class="admin-brand">MUDAN / ADMIN<small>私人日志</small></div><a class="admin-exit" href="#mudanMy">退出登录</a></header><main class="admin-main"><article class="admin-log-page"><a class="admin-log-back" href="#mudanAdminMe" data-jt-nav="back">‹ 返回日志</a><div class="admin-log-date-big">2018.5.6</div><h2>日志 05</h2><div class="admin-log-body">我了解，学习了更多关于mect的知识。真是当代医学的一个好技术，很适合我们疗养院。我打算，让每个入院的病人都去做，哪怕评估没问题。毕竟，谁知道那些病人是不是装的。万一有装正常人的，那些评估人员看不出来呢？既然要做专业，那就不能让病人逃过治疗。不管是药物，还是mect。这要成为一个硬规矩，为了革新，为了专业和研究，必须这样做。</div></article></main></section>
-<section aria-label="日志 06" class="mudan-admin" id="adminLog6"><header class="admin-top"><div class="admin-brand">MUDAN / ADMIN<small>私人日志</small></div><a class="admin-exit" href="#mudanMy">退出登录</a></header><main class="admin-main"><article class="admin-log-page"><a class="admin-log-back" href="#mudanAdminMe" data-jt-nav="back">‹ 返回日志</a><div class="admin-log-date-big">2019.5.18</div><h2>日志 06</h2><div class="admin-log-body">我开始接触 ECT。
+<section aria-label="日志 06" class="mudan-admin" id="adminLog6"><header class="admin-top"><div class="admin-brand">MUDAN / ADMIN<small>私人日志</small></div><a class="admin-exit" href="#mudanMy">退出登录</a></header><main class="admin-main"><article class="admin-log-page"><a class="admin-log-back" href="#mudanAdminMe" data-jt-nav="back">‹ 返回日志</a><div class="admin-log-date-big">2019.5.18</div><h2>日志 06</h2><div class="admin-log-body">最近我开始接触ECT。
 
-但是我发现，打麻药后的效果并不好。今天新入院了一个人，叫白瑞。她父母因为她网瘾严重，把她送到精神病院。
+因为，我发现打麻药后的效果并不好。今天新入院了一个人，叫白瑞。她父母因为她网瘾严重，把她送到精神病院。
 
 我想，这正是一个实验的好机会。于是没有使用麻醉，直接给白瑞进行了 ECT。
 
@@ -2927,6 +2944,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <div class="jga-subnav"><span>中央精神</span><span>京田要闻</span><span>警务报道</span><span>通知公告</span><span>分局警讯</span><span>政务信息</span></div>
 <main class="jga-wrap">
 <div class="jga-home-layout">
+<div class="jga-home-main">
 <section class="jga-panel">
 <div class="jga-panel-hd">警务要闻</div>
 <div class="jga-panel-bd">
@@ -2938,6 +2956,30 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <div class="jga-dots"><span></span><span></span><span></span></div>
 </div>
 </section>
+<section class="jga-panel">
+<div class="jga-panel-hd">警务公开</div>
+<div class="jga-panel-bd">
+<div class="jga-gov-grid">
+<a class="jga-gov-card" href="#jgaRegDrone">京田市无人驾驶航空器管理规定<small>法规发布与解读</small></a>
+<a class="jga-gov-card" href="#jgaRegBike">京田市非机动车管理条约<small>交通秩序与文明出行</small></a>
+<a class="jga-gov-card" href="#jgaRegHotel">京田市旅馆业治安管理规定<small>行业规范与责任要求</small></a>
+</div>
+<div class="jga-home-muted">围绕法规发布、事项公开、规范执法和服务引导持续推进。</div>
+</div>
+</section>
+<section class="jga-panel">
+<div class="jga-panel-hd">政务服务</div>
+<div class="jga-panel-bd">
+<div class="jga-quick-list">
+<a class="jga-quick-link" href="#jgaMy">个人中心</a>
+<a class="jga-quick-link" href="#jgaInfo">通知公告</a>
+<a class="jga-quick-link" href="#jgaOpen">政策法规</a>
+<a class="jga-quick-link" href="#jgaHomeArticle">工作动态</a>
+</div>
+<div class="jga-home-muted">提供信息查询、公开查阅、政策浏览与常用服务入口。</div>
+</div>
+</section>
+</div>
 <div class="jga-side-stack">
 <section class="jga-panel">
 <div class="jga-panel-hd">通知公告</div>
@@ -2974,31 +3016,21 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 </div>
 </div>
 </section>
-<div class="jga-bottom-grid">
-<section class="jga-panel">
-<div class="jga-panel-hd">警务公开</div>
+<section class="jga-panel jga-home-contacts" aria-labelledby="jgaContactsTitle">
+<div class="jga-panel-hd" id="jgaContactsTitle">联系方式</div>
 <div class="jga-panel-bd">
-<div class="jga-gov-grid">
-<a class="jga-gov-card" href="#jgaRegDrone">京田市无人驾驶航空器管理规定<small>法规发布与解读</small></a>
-<a class="jga-gov-card" href="#jgaRegBike">京田市非机动车管理条约<small>交通秩序与文明出行</small></a>
-<a class="jga-gov-card" href="#jgaRegHotel">京田市旅馆业治安管理规定<small>行业规范与责任要求</small></a>
-</div>
-<div class="jga-home-muted">围绕法规发布、事项公开、规范执法和服务引导持续推进。</div>
+<table class="jga-contact-table">
+<thead><tr><th scope="col">职位</th><th scope="col">名字</th><th scope="col">邮箱</th></tr></thead>
+<tbody>
+<tr><td>市公安局局长</td><td>杨振海</td><td>yang.zh@jingtian-police.gov</td></tr>
+<tr><td>市公安局副局长</td><td>郑明远</td><td>zhengmy@mail.com</td></tr>
+<tr><td>治安管理大队队长</td><td>林建安</td><td>linja@mail.com</td></tr>
+<tr><td>刑侦支队组长</td><td>陈圆</td><td>chenyuan@jingtian-police.gov</td></tr>
+<tr><td>民警</td><td>罗鑫</td><td>luoxin0812@mail.com</td></tr>
+</tbody>
+</table>
 </div>
 </section>
-<section class="jga-panel">
-<div class="jga-panel-hd">政务服务</div>
-<div class="jga-panel-bd">
-<div class="jga-quick-list">
-<a class="jga-quick-link" href="#jgaMy">个人中心</a>
-<a class="jga-quick-link" href="#jgaInfo">通知公告</a>
-<a class="jga-quick-link" href="#jgaOpen">政策法规</a>
-<a class="jga-quick-link" href="#jgaHomeArticle">工作动态</a>
-</div>
-<div class="jga-home-muted">提供信息查询、公开查阅、政策浏览与常用服务入口。</div>
-</div>
-</section>
-</div>
 </main>
 </section>
 <section aria-label="京田市公安局持续推进夏季社会面巡防与便民服务联动工作" class="jga-site" id="jgaHomeArticle">
@@ -3287,7 +3319,7 @@ window.jgaYangSearchNow=function(){
 <main class="jga-yang-main"><article class="jga-yang-paper jga-autopsy-paper"><a class="jga-yang-back" href="#jgaYangLuResults" data-jt-nav="back">‹ 返回检索结果</a><h1>陆添时死亡报告</h1><div class="jga-yang-meta">归档日期：2022.01.23　｜　文件类型：法医学影印件　｜　密级：绝密</div><p class="jga-autopsy-intro">以下为陆添时死亡报告存档影印件，共 2 页。<a href="assets/lu-tianshi-death-report-21c7c7253e28.pdf" target="_blank" rel="noopener">查看 PDF 原件</a></p><div class="jga-autopsy-pages"><figure><div class="jga-page-tag">1 / 2</div><img alt="陆添时死亡报告第1页" src="assets/lu-tianshi-death-report-page-1-cf06a19126f1.jpg" width="1658" height="2345"/></figure><figure><div class="jga-page-tag">2 / 2</div><img alt="陆添时死亡报告第2页" src="assets/lu-tianshi-death-report-page-2-259997b4b182.jpg" width="1658" height="1826"/></figure></div></article></main>
 </section>
 <section aria-label="杨振海笔记" class="jga-site jga-yang-site" id="jgaYangLuNote">
-<header class="jga-header"><div class="jga-util"><div class="jga-util-in"><a href="#jgaYangLuResults" data-jt-nav="back">‹ 返回检索结果</a><div>京田市公安局 · 个人加密笔记</div></div></div><nav class="jga-nav"><div class="jga-navin"><a href="#jgaYangPortal">内部首页</a><a href="#jgaYangPortal">系统日志</a><a href="#jgaYangPortal">权限记录</a><a href="#jgaMy">退出</a></div></nav></header><div class="jga-yang-welcome">欢迎回来，杨局长</div><main class="jga-yang-main"><article class="jga-yang-paper"><a class="jga-yang-back" href="#jgaYangLuResults" data-jt-nav="back">‹ 返回检索结果</a><h1>杨振海笔记</h1><div class="jga-yang-meta">记录日期：2022.01.22　｜　文件类型：私人笔记　｜　访问级别：局长</div><div class="jga-lock-panel"><h3>访问验证</h3><p>该条目设有独立密码保护。请输入访问密码后查看正文。</p><div class="jga-lock-hint">Name Stroke Count</div><form class="jga-lock-form" onsubmit="return jgaUnlockYangLuNote(event)"><input autocomplete="off" id="jgaYangLuNoteInput" placeholder="请输入密码" required="" type="password"/><button type="submit">解锁</button></form><div class="jga-lock-error" id="jgaYangLuNoteError">密码错误，请重新输入。</div></div><div class="jga-note-content" id="jgaYangLuNoteContent" style="display:none"><div class="jga-note-date">2022.1.22</div><p>老雷又让我这样做，那个孩子确实挺冤。那天她弟弟从后山闯进疗养院，虽然有问题，可老雷居然叫一堆有狂躁症和暴力倾向的人去对付他们。这样就随他愿了吗？姐弟两人，一死一伤。</p><p>我看监控录像，那群人当时拿起手边的拖把，扫把，有的甚至赤手空拳，就对他俩打了起来。那个女孩直接抱住她弟弟，让那些棍棒和拳脚都落在自己身上，最后，没了呼吸。</p><p>是我做的尸检，那个女孩全身淤青，脑部甚至有外伤。做尸检 CT 的时候，发现她脑子里有个<b>前额叶</b>区的<b>肿瘤</b>。这个女孩的家属硬说她有精神病……我多想告诉他们，他们的错误有多大，大到毁了一个女孩。可被老雷逼迫，我也只能说她是和白瑞一样，做治疗而死。</p><p>至于那个男孩，老雷用了他的办法。无抽搐电休克和药物一起用，足够让他忘记这些。对他父母，只说为了救人，误闯入疗养院，被护士当成患者做治疗了。为了演得更愧疚，老雷还对他父母道歉，说不好意思，他们会加强监管，不会再让护士误把正常人做治疗。多讽刺啊，雷青泽，你没有心。</p><p>那个女孩还留下一个笔记本，我还是交给她父母，当遗物吧。</p></div></article></main>
+<header class="jga-header"><div class="jga-util"><div class="jga-util-in"><a href="#jgaYangLuResults" data-jt-nav="back">‹ 返回检索结果</a><div>京田市公安局 · 个人加密笔记</div></div></div><nav class="jga-nav"><div class="jga-navin"><a href="#jgaYangPortal">内部首页</a><a href="#jgaYangPortal">系统日志</a><a href="#jgaYangPortal">权限记录</a><a href="#jgaMy">退出</a></div></nav></header><div class="jga-yang-welcome">欢迎回来，杨局长</div><main class="jga-yang-main"><article class="jga-yang-paper"><a class="jga-yang-back" href="#jgaYangLuResults" data-jt-nav="back">‹ 返回检索结果</a><h1>杨振海笔记</h1><div class="jga-yang-meta">记录日期：2022.01.22　｜　文件类型：私人笔记　｜　访问级别：局长</div><div class="jga-lock-panel"><h3>访问验证</h3><p>该条目设有独立密码保护。请输入访问密码后查看正文。</p><div class="jga-lock-hint">Name Stroke Count</div><form class="jga-lock-form" onsubmit="return jgaUnlockYangLuNote(event)"><input autocomplete="off" id="jgaYangLuNoteInput" placeholder="请输入密码" required="" type="password"/><button type="submit">解锁</button></form><div class="jga-lock-error" id="jgaYangLuNoteError">密码错误，请重新输入。</div></div><div class="jga-note-content" id="jgaYangLuNoteContent" style="display:none"><div class="jga-note-date">2022.1.22</div><p>老雷又让我这样做，那个孩子确实挺冤。那天她弟弟从后山闯进疗养院，虽然有问题，可老雷居然叫一堆有狂躁症和暴力倾向的人去对付他们。这样就随他愿了吗？姐弟两人，一死一伤。</p><p>我看监控录像，那群人当时拿起手边的拖把，扫把，有的甚至赤手空拳，就对他俩打了起来。那个女孩直接抱住她弟弟，让那些棍棒和拳脚都落在自己身上，最后，没了呼吸。</p><p>是我做的尸检，那个女孩全身淤青，脑部甚至有外伤。做尸检 CT 的时候，发现她脑子里有个<b>前额叶</b>区的<b>肿瘤</b>。这个女孩的家属硬说她有精神病……我多想告诉他们，他们的错误有多大，大到毁了一个女孩。可被老雷逼迫，我也只能说她是和白瑞一样，做治疗而死。</p><p>至于那个男孩，老雷用了他的办法。MECT和药物一起用，足够让他忘记这些。对他父母，只说为了救人，误闯入疗养院，被护士当成患者做治疗了。为了演得更愧疚，老雷还对他父母道歉，说不好意思，他们会加强监管，不会再让护士误把正常人做治疗。多讽刺啊，雷青泽，你没有心。</p><p>那个女孩还留下一个笔记本，我还是交给她父母，当遗物吧。</p></div></article></main>
 </section>
 <section aria-label="雷青泽内部文件搜索结果" class="jga-site jga-yang-site" id="jgaYangLeiResults">
 <header class="jga-header"><div class="jga-util"><div class="jga-util-in"><a href="#jgaYangPortal" data-jt-nav="back">‹ 返回内部首页</a><div>京田市公安局 · 内部资料系统</div></div></div><nav class="jga-nav"><div class="jga-navin"><a href="#jgaYangPortal">内部首页</a><a href="#jgaYangPortal">系统日志</a><a href="#jgaYangPortal">权限记录</a><a href="#jgaMy">退出</a></div></nav></header><div class="jga-yang-welcome">欢迎回来，杨局长</div><main class="jga-yang-main"><section class="jga-yang-search"><h3>检索结果</h3><div class="jga-yang-note">共找到 2 条符合当前权限的内部记录</div></section><div class="jga-yang-results"><a class="jga-yang-result" href="#jgaYangLei20160701"><div class="meta">2016.07.01 · 内部新闻存档 · 医疗机构</div><h3>原京田市第二人民医院雷青泽开办个人医院</h3><p>关于原第二人民医院精神科副主任医师雷青泽离职并设立牡丹精神疗养院的内部资料存档。</p></a><a class="jga-yang-result" href="#jgaYangBaiAudio"><div class="meta">2019.07.20 · 音频附件 · 限制级</div><h3>加密录音 <span class="jga-classified">已解密</span></h3><p>白瑞案相关音频记录。当前局长级账户具有播放权限。</p></a></div></main>
@@ -3739,6 +3771,23 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
   /* 登录陆添时旧电脑时只切换页面，不重新载入整份游戏。 */
   var computerForm=document.querySelector('.lts-login-native');
   var computerInput=computerForm&&computerForm.querySelector('input[type="password"]');
+  var returnLink=document.getElementById('luoxinReturnLts');
+  var computerUnlockedKey='v142_jt_lts_computer_unlocked';
+  function syncComputerShortcut(){
+    if(returnLink)returnLink.hidden=!getFlag(computerUnlockedKey);
+  }
+  function restoreComputerShortcut(){
+    /* Migrate an older save only when it shows a correct login inside the unlocked computer. */
+    var saved=window.jtGameSave&&window.jtGameSave.snapshot;
+    var savedPage=saved&&document.getElementById(saved.hash.slice(1));
+    if(!getFlag(computerUnlockedKey)&&savedPage&&savedPage.closest('#ltsDesktop,#ltsFilesUnlocked')&&computerInput&&computerInput.value.replace(/\s+/g,'')==='20071201')setFlag(computerUnlockedKey);
+    syncComputerShortcut();
+  }
+  syncComputerShortcut();
+  window.addEventListener('jt:game-restored',restoreComputerShortcut,false);
+  if(returnLink)returnLink.addEventListener('click',function(e){
+    if(!getFlag(computerUnlockedKey))e.preventDefault();
+  },false);
   if(computerForm){
     computerForm.addEventListener('submit',function(e){
       e.preventDefault();
@@ -3746,6 +3795,8 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       if(computerInput.value.replace(/\s+/g,'')==='20071201'){
         computerInput.setCustomValidity('');
         try{computerInput.blur();}catch(_e){}
+        setFlag(computerUnlockedKey);
+        syncComputerShortcut();
         location.hash='ltsDesktop';
         return false;
       }
