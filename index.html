@@ -37,6 +37,7 @@
 <style id="jt-save-first-paint">
 html.jt-restoring{background:#112130}
 html.jt-restoring body{opacity:0!important;pointer-events:none!important}
+html.jt-restoring::after{content:"正在恢复上次进度…";position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;color:#c5d3de;font:14px/1.8 "PingFang SC","Microsoft YaHei",sans-serif;pointer-events:none}
 </style>
 <script id="jt-game-save-bootstrap">
 (function(){
@@ -1182,6 +1183,8 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 .game-opening-story p{margin:0 0 18px;color:#d6dee5;font-family:"Songti SC","STSong","Noto Serif CJK SC",serif;font-size:17px;line-height:2.05;text-indent:2em;text-align:justify;text-justify:inter-ideograph}
 .game-opening-start{display:block;width:min(360px,100%);margin:34px auto 0;padding:14px 24px;border:1px solid #8aa1b2;border-radius:2px;background:transparent;color:#f2f6f9;font:700 14px/1.3 "PingFang SC","Microsoft YaHei",sans-serif;letter-spacing:.12em;cursor:pointer;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
 .game-opening-start:hover,.game-opening-start:focus{background:#dfe8ef;color:#101a22;box-shadow:0 10px 30px rgba(115,151,177,.16);transform:translateY(-1px)}
+.game-opening-start:disabled,.game-opening-start:disabled:hover,.game-opening-start:disabled:focus{background:transparent;color:#aebcc7;box-shadow:none;transform:none;cursor:wait;opacity:.75}
+.game-opening-story .game-opening-status{min-height:1.8em;margin:12px 0 0;color:#9aafbf;font:13px/1.8 "PingFang SC","Microsoft YaHei",sans-serif;text-align:center;text-indent:0;letter-spacing:0}
 .game-opening-tips{max-width:820px;margin:44px auto 0;padding:28px 30px;border-top:1px solid rgba(139,163,181,.24);background:rgba(15,27,37,.58)}
 .game-opening-tips h2{margin:0 0 18px;color:#e6edf2;font-size:14px;letter-spacing:.18em}
 .game-opening-tips ul{list-style:none;margin:0;padding:0}
@@ -1278,14 +1281,15 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 </script>
 </head>
 <body>
-<section class="game-opening-page is-visible" id="gameOpeningPage" aria-label="京田市谜案调查开场">
+<section class="game-opening-page is-visible" id="gameOpeningPage" aria-label="京田市谜案调查开场" aria-busy="true">
   <div class="game-opening-shell">
     <div class="game-opening-cover"><img alt="京田市谜案调查" src="assets/image-74a8d0589975375ea7bc72a23933d815337fe974226684d84ad4d26edbdbe1b2.jpg"></div>
     <article class="game-opening-story">
       <div class="game-opening-eyebrow">CASE FILE · JINGTIAN</div>
       <p>你是一个刚入职京田市公安局的警察，叫罗鑫，26岁。你偶然听说警局内有个谜案，但警局封锁了一切消息，只知道案件与一个叫陆添时的女孩有关。</p>
       <p>你对这个案子很好奇，所以经常在网上搜索，却始终没有找到什么线索。直到有一天，你收到了一封邮件。发件人是一个刚刚结束高考的男孩，叫陆添辰……</p>
-      <button class="game-opening-start" id="gameOpeningStart" type="button">点击此处开始游戏</button>
+      <button class="game-opening-start" id="gameOpeningStart" type="button" disabled aria-describedby="gameOpeningStatus">正在准备游戏…</button>
+      <p class="game-opening-status" id="gameOpeningStatus" role="status" aria-live="polite">正在加载，请稍候。你可以先阅读开场介绍。</p>
     </article>
     <aside class="game-opening-tips">
       <h2>小提示</h2>
@@ -1299,6 +1303,41 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
     </aside>
   </div>
 </section>
+<script id="v154-opening-script">
+(function(){
+  var page=document.getElementById('gameOpeningPage');
+  var start=document.getElementById('gameOpeningStart');
+  var status=document.getElementById('gameOpeningStatus');
+  var ready=false;
+  function markReady(){
+    if(ready||document.readyState==='loading')return;
+    if(window.jtGameSave&&window.jtGameSave.restoring)return;
+    ready=true;
+    if(start){start.disabled=false;start.textContent='点击此处开始游戏';}
+    if(status)status.textContent='准备完成，请点击上方按钮进入游戏。';
+    if(page)page.setAttribute('aria-busy','false');
+  }
+  function scheduleReady(){requestAnimationFrame(markReady);}
+  function beginGame(){
+    if(!ready||!page||!page.classList.contains('is-visible'))return;
+    var desktopState=document.getElementById('app-none');
+    var mailState=document.getElementById('mail-default');
+    var wechatState=document.getElementById('wechat-none');
+    if(desktopState)desktopState.checked=true;
+    if(mailState)mailState.checked=true;
+    if(wechatState)wechatState.checked=true;
+    page.classList.remove('is-visible');
+    page.setAttribute('aria-hidden','true');
+    page.scrollTop=0;
+    if(location.hash)location.hash='';
+    try{window.scrollTo(0,0);}catch(e){}
+  }
+  if(start)start.addEventListener('click',beginGame,false);
+  document.addEventListener('DOMContentLoaded',scheduleReady,false);
+  window.addEventListener('jt:game-restored',scheduleReady,false);
+  if(document.readyState!=='loading')scheduleReady();
+})();
+</script>
 <input checked="" class="ui-state" id="app-none" name="app" type="radio"/>
 <input class="ui-state" id="app-calendar" name="app" type="radio"/>
 <input class="ui-state" id="app-mail" name="app" type="radio"/>
@@ -5209,28 +5248,6 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
       location.hash='policeSearchResult';
     }
   },false);
-})();
-</script>
-<script id="v154-opening-script">
-(function(){
-  var page=document.getElementById('gameOpeningPage');
-  var start=document.getElementById('gameOpeningStart');
-  function beginGame(){
-    var desktopState=document.getElementById('app-none');
-    var mailState=document.getElementById('mail-default');
-    var wechatState=document.getElementById('wechat-none');
-    if(desktopState)desktopState.checked=true;
-    if(mailState)mailState.checked=true;
-    if(wechatState)wechatState.checked=true;
-    if(page){
-      page.classList.remove('is-visible');
-      page.setAttribute('aria-hidden','true');
-      page.scrollTop=0;
-    }
-    if(location.hash)location.hash='';
-    try{window.scrollTo(0,0);}catch(e){}
-  }
-  if(start)start.addEventListener('click',beginGame,false);
 })();
 </script>
 <script id="v150-native-submit-safety">
