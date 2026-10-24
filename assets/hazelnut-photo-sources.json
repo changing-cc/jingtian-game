@@ -1,50 +1,41 @@
 [
   {
-    "file": "hazelnut-chocolate.jpg",
-    "source": "https://www.pexels.com/photo/photograph-of-hazelnuts-on-top-of-chocolate-14456333/",
-    "author": "Duygu Kamar",
-    "license": "Pexels License",
-    "license_url": "https://www.pexels.com/license/",
-    "download": "https://images.pexels.com/photos/14456333/pexels-photo-14456333.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "file": "hazelnut-generated-hero.jpg",
     "dimensions": [
-      500,
-      750
+      900,
+      900
     ],
-    "bytes": 47848,
-    "git_blob": "7428b99b05657b9e2601fc7b3c709cf36193ce45",
-    "verified_on": "2026-10-24",
-    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+    "bytes": 155204,
+    "blob": "ae48b5cbeebe154a33ebde76a203ff0474ab56c2",
+    "generation": "OpenAI built-in image generation",
+    "generated_on": "2026-10-24",
+    "prompt": "Use case: photorealistic-natural. Create a new original food photograph style image for the main illustration of a fictional desktop food encyclopedia about hazelnut chocolate. Square composition. Close-up of several irregular broken pieces of dark milk hazelnut chocolate on a simple off-white ceramic plate over a light neutral kitchen countertop. The broken edges clearly show whole and halved roasted hazelnuts embedded INSIDE the chocolate; a few real-looking hazelnuts beside the pieces. Honest everyday food photography, soft daylight from a window, plausible natural shadows, detailed matte chocolate with a slight natural sheen, small imperfections, believable scale and textures, subtle shallow depth of field. The food occupies most of the image with little empty space and remains legible cropped near square. Not an illustration, not a 3D render, not a glossy luxury advertisement. No people, no text, no letters, no logos, no watermark, no packaging. Do not imitate any referenced or previously displayed photo; make an original composition. Opaque background.",
+    "note": "New generated game illustration. Exported as an optimized JPEG. No third-party photograph used."
   },
   {
-    "file": "hazelnut-making-1.jpg",
-    "source": "https://www.pexels.com/photo/chocolate-with-raisins-and-hazelnuts-5924848/",
-    "author": "Pavel Subbotin",
-    "license": "Pexels License",
-    "license_url": "https://www.pexels.com/license/",
-    "download": "https://images.pexels.com/photos/5924848/pexels-photo-5924848.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "file": "hazelnut-generated-mixing.jpg",
     "dimensions": [
-      1129,
-      750
+      1000,
+      667
     ],
-    "bytes": 83900,
-    "git_blob": "29317bb564b1fb303b73e9176b21d603daff5131",
-    "verified_on": "2026-10-24",
-    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+    "bytes": 150661,
+    "blob": "171effc8078a45c856b3b478cac0b019ba1a92d2",
+    "generation": "OpenAI built-in image generation",
+    "generated_on": "2026-10-24",
+    "prompt": "Use case: photorealistic-natural. Create a new original photograph style image for a recipe-video thumbnail showing the MAKING of hazelnut chocolate, horizontal 3:2 composition. At a kitchen worktop, an overhead three-quarter close-up of a stainless steel mixing bowl containing glossy melted dark chocolate and a generous handful of toasted whole and halved hazelnuts, with a plain silicone spatula resting in the bowl, visibly partly folding nuts into chocolate. A small unbranded ceramic dish with a few hazelnuts sits at the edge. This is an ordinary credible home baking process scene, soft window daylight, muted neutral worktop, realistic chocolate viscosity, irregular hazelnut sizes, slight smears on the bowl, natural imperfect arrangement. Central food and bowl must remain readable when cropped to 16:9. No visible people or hands, no text, no words, no labels, no logos, no watermark. Not illustration, not CGI, not a stock-advertising fantasy. Original composition not copied from prior photos. Opaque background.",
+    "note": "New generated game illustration. Exported as an optimized JPEG. No third-party photograph used."
   },
   {
-    "file": "hazelnut-making-2.jpg",
-    "source": "https://www.pexels.com/photo/chunks-of-chocolate-on-bowls-5924846/",
-    "author": "Pavel Subbotin",
-    "license": "Pexels License",
-    "license_url": "https://www.pexels.com/license/",
-    "download": "https://images.pexels.com/photos/5924846/pexels-photo-5924846.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "file": "hazelnut-generated-tray.jpg",
     "dimensions": [
-      1123,
-      750
+      1000,
+      667
     ],
-    "bytes": 82377,
-    "git_blob": "560447179ffa684e16956fb733eeb599361aa5a2",
-    "verified_on": "2026-10-24",
-    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+    "bytes": 146621,
+    "blob": "9c98436942e432ae9c95ed18715a8572a591205e",
+    "generation": "OpenAI built-in image generation",
+    "generated_on": "2026-10-24",
+    "prompt": "Use case: photorealistic-natural. Create a new original photograph style image for a second recipe-video thumbnail showing a DIFFERENT STAGE of MAKING hazelnut chocolate. Horizontal 3:2 composition, overhead view of a small rectangular metal baking tray lined with subtly wrinkled baking parchment, filled with freshly spread melted dark chocolate with roasted whole and halved hazelnuts distributed naturally through the chocolate. A plain offset spatula rests diagonally at the edge, with realistic chocolate residue. The chocolate is being set after spreading: gently uneven surface, realistic wet sheen, hazelnuts partly visible and embedded, not an impossibly perfect pattern. Neutral light kitchen counter, soft natural window light, casual believable documentary food photography with restrained colors and fine material detail. Main tray centered with crop-safe edges for a 16:9 thumbnail. No people, no hands, no text, no labels, no logos, no watermark or branding. No 3D rendering or illustration. New original composition, do not copy other images in this conversation. Opaque background.",
+    "note": "New generated game illustration. Exported as an optimized JPEG. No third-party photograph used."
   }
 ]
