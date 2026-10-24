@@ -1,0 +1,50 @@
+[
+  {
+    "file": "hazelnut-chocolate.jpg",
+    "source": "https://www.pexels.com/photo/photograph-of-hazelnuts-on-top-of-chocolate-14456333/",
+    "author": "Duygu Kamar",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "download": "https://images.pexels.com/photos/14456333/pexels-photo-14456333.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "dimensions": [
+      500,
+      750
+    ],
+    "bytes": 47848,
+    "git_blob": "7428b99b05657b9e2601fc7b3c709cf36193ce45",
+    "verified_on": "2026-10-24",
+    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+  },
+  {
+    "file": "hazelnut-making-1.jpg",
+    "source": "https://www.pexels.com/photo/chocolate-with-raisins-and-hazelnuts-5924848/",
+    "author": "Pavel Subbotin",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "download": "https://images.pexels.com/photos/5924848/pexels-photo-5924848.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "dimensions": [
+      1129,
+      750
+    ],
+    "bytes": 83900,
+    "git_blob": "29317bb564b1fb303b73e9176b21d603daff5131",
+    "verified_on": "2026-10-24",
+    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+  },
+  {
+    "file": "hazelnut-making-2.jpg",
+    "source": "https://www.pexels.com/photo/chunks-of-chocolate-on-bowls-5924846/",
+    "author": "Pavel Subbotin",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "download": "https://images.pexels.com/photos/5924846/pexels-photo-5924846.jpeg?auto=compress&dpr=1&h=750&w=1260",
+    "dimensions": [
+      1123,
+      750
+    ],
+    "bytes": 82377,
+    "git_blob": "560447179ffa684e16956fb733eeb599361aa5a2",
+    "verified_on": "2026-10-24",
+    "notes": "Downloaded provider-optimized JPEG; no local image edits. Display framing is controlled with CSS."
+  }
+]
