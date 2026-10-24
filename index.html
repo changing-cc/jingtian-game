@@ -1392,7 +1392,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <label class="mitem" for="mail-yang"><div class="row"><span class="sender">杨局长</span><span class="time">6月2日 18:52</span></div><div class="subject">关于近期内部信息检索行为的提醒</div><div class="preview">罗鑫同志：近期系统日志显示，你多次检索与“陆添时”有关的信息。</div></label>
 </div>
 <article class="mailview">
-<div class="mailpage" id="pchen"><label class="back" for="mail-default" data-jt-nav="back" role="button" tabindex="0" aria-label="收件箱">‹ 收件箱</label><div class="msubject">关于本周辖区走访材料补录</div><div class="meta"><b>发件人</b><span>陈圆 &lt;chenyuan@jingtian-police.gov&gt;</span><b>收件人</b><span>罗鑫 &lt;luoxin0812@mail.com&gt;</span><b>时间</b><span>2026年6月5日 16:18</span></div><div class="text">罗鑫：
+<div class="mailpage" id="pchen"><label class="back" for="mail-default" data-jt-nav="back" role="button" tabindex="0" aria-label="收件箱">‹ 收件箱</label><div class="msubject">关于本周辖区走访材料补录</div><div class="meta"><b>发件人</b><span>陈圆 &lt;chenyuan@mail.com&gt;</span><b>收件人</b><span>罗鑫 &lt;luoxin0812@mail.com&gt;</span><b>时间</b><span>2026年6月5日 16:18</span></div><div class="text">罗鑫：
 
 今天会上说的那批辖区走访材料，你下班前再核一下。主要是和平路、南河巷两处，系统里还有四份回访记录没补全，照片附件也缺了两张。
 
@@ -3023,9 +3023,13 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
 <thead><tr><th scope="col">职位</th><th scope="col">名字</th><th scope="col">邮箱</th></tr></thead>
 <tbody>
 <tr><td>市公安局局长</td><td>杨振海</td><td>yang.zh@jingtian-police.gov</td></tr>
-<tr><td>市公安局副局长</td><td>郑明远</td><td>zhengmy@mail.com</td></tr>
+<tr><td>市公安局副局长</td><td>郑明远</td><td>zhengmy@jingtian-police.gov</td></tr>
+<tr><td>办公室主任</td><td>周明哲</td><td>zhoumz@mail.com</td></tr>
+<tr><td>刑侦支队支队长</td><td>许正平</td><td>xuzp@mail.com</td></tr>
 <tr><td>治安管理大队队长</td><td>林建安</td><td>linja@mail.com</td></tr>
-<tr><td>刑侦支队组长</td><td>陈圆</td><td>chenyuan@jingtian-police.gov</td></tr>
+<tr><td>交通管理大队队长</td><td>高文斌</td><td>gaowb@mail.com</td></tr>
+<tr><td>户政管理科科长</td><td>赵静</td><td>zhaojing@mail.com</td></tr>
+<tr><td>刑侦支队组长</td><td>陈圆</td><td>chenyuan@mail.com</td></tr>
 <tr><td>民警</td><td>罗鑫</td><td>luoxin0812@mail.com</td></tr>
 </tbody>
 </table>
@@ -3777,10 +3781,26 @@ body{width:100vw!important;height:100vh!important;min-height:100vh!important;max
     if(returnLink)returnLink.hidden=!getFlag(computerUnlockedKey);
   }
   function restoreComputerShortcut(){
-    /* Migrate an older save only when it shows a correct login inside the unlocked computer. */
+    /* Older saves can be back on Luoxin's desktop after using the unlocked computer. */
     var saved=window.jtGameSave&&window.jtGameSave.snapshot;
     var savedPage=saved&&document.getElementById(saved.hash.slice(1));
-    if(!getFlag(computerUnlockedKey)&&savedPage&&savedPage.closest('#ltsDesktop,#ltsFilesUnlocked')&&computerInput&&computerInput.value.replace(/\s+/g,'')==='20071201')setFlag(computerUnlockedKey);
+    var usedComputer=!!(savedPage&&savedPage.closest('#ltsDesktop,#ltsFilesUnlocked'));
+    if(saved&&!usedComputer){
+      var controls=saved.ui&&saved.ui.controls;
+      usedComputer=Array.isArray(controls)&&controls.some(function(state){
+        if(!state||typeof state.key!=='string')return false;
+        var parts=state.key.split('|');
+        if(parts.length!==2)return false;
+        var input=document.getElementById(parts[0]);
+        var path=parts[1]?parts[1].split('.'):[];
+        for(var i=0;input&&i<path.length;i++)input=input.children[Number(path[i])];
+        if(!input||!input.closest('#ltsDesktop')||input.tagName!==state.tag||input.type!==state.type)return false;
+        if(input.type==='radio'||input.type==='checkbox')return !!state.checked&&!input.defaultChecked;
+        return String(state.value||'')!==input.defaultValue;
+      });
+      if(!usedComputer)usedComputer=['v142_jt_notebook_mail_available','v142_jt_lts_blog_visited','v142_jt_notebook_pages_available','v142_jt_yang_threat_mail_available'].some(getFlag);
+    }
+    if(!getFlag(computerUnlockedKey)&&usedComputer&&computerInput&&computerInput.value.replace(/\s+/g,'')==='20071201')setFlag(computerUnlockedKey);
     syncComputerShortcut();
   }
   syncComputerShortcut();
