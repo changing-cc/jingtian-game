@@ -194,6 +194,7 @@ img[data-jt-image-error]{cursor:pointer;outline:1px dashed #8a99a6;outline-offse
     img.setAttribute('data-jt-image-error','1');
     img.alt='图片暂未加载，点击重试：'+img._jtRetryAlt;
     img.setAttribute('title','点击重新加载图片');img.setAttribute('role','button');img.setAttribute('tabindex','0');
+    if(img.getAttribute('data-jt-preload-owner'))return;
     if(!img._jtAutoRetried){img._jtAutoRetried=true;setTimeout(function(){if(img.getAttribute('data-jt-image-error'))retry(img);},1200);}
   }
   document.addEventListener('error',function(e){failed(e.target);},true);
@@ -1297,6 +1298,8 @@ body{width:100vw;height:var(--game-vh);min-height:var(--game-vh);background:#0e1
 @media(max-width:620px){.mudan-zhang-public{grid-template-columns:1fr}.mudan-zhang-public-photo{width:145px}.mudan-staff-profile-top{grid-template-columns:96px minmax(0,1fr)}.mudan-staff-profile-photo{width:96px}}
 </style>
 <style id="v154-opening-style">
+#gameOpeningRetry[hidden]{display:none}
+#gameOpeningRetry{margin-top:12px;font-size:13px;letter-spacing:.02em}
 .game-opening-page{position:fixed;inset:0;z-index:90000;display:none;overflow:auto;background:#050b10;color:#e9eef3;-webkit-overflow-scrolling:touch}
 .game-opening-page.is-visible{display:block}
 .game-opening-shell{width:min(1060px,100%);min-height:100%;margin:0 auto;padding:34px 28px 54px}
@@ -1417,6 +1420,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
       <p>你对这个案子很好奇，所以经常在网上搜索，却始终没有找到什么线索。直到有一天，你收到了一封邮件。发件人是一个刚刚结束高考的男孩，叫陆添辰……</p>
       <button class="game-opening-start" id="gameOpeningStart" type="button" disabled aria-describedby="gameOpeningStatus">正在准备游戏…</button>
       <p class="game-opening-status" id="gameOpeningStatus" role="status" aria-live="polite">正在加载，请稍候。你可以先阅读开场介绍。</p>
+      <button class="game-opening-start" id="gameOpeningRetry" type="button" hidden>重试未成功的图片</button>
     </article>
     <aside class="game-opening-tips">
       <h2>小提示</h2>
@@ -1437,17 +1441,17 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
   var status=document.getElementById('gameOpeningStatus');
   var ready=false;
   function markReady(){
-    if(ready||document.readyState==='loading')return;
+    if(document.readyState==='loading')return;
     var save=window.jtGameSave;
-    if(!save||save.restoring||save.restoreError||typeof save.capture!=='function')return;
-    ready=true;
+    ready=!!(save&&!save.restoring&&!save.restoreError&&typeof save.capture==='function'&&window.jtOpeningImages&&window.jtOpeningImages.ready());
+    if(!ready){if(start)start.disabled=true;return;}
     if(start){start.disabled=false;start.textContent='点击此处开始游戏';}
-    if(status)status.textContent='准备完成，请点击上方按钮进入游戏。';
+    if(status)status.textContent='全部图片已准备完成，请点击上方按钮进入游戏。';
     if(page)page.setAttribute('aria-busy','false');
   }
   function scheduleReady(){requestAnimationFrame(markReady);}
   function beginGame(){
-    if(!ready||!page||!page.classList.contains('is-visible'))return;
+    if(!ready||!window.jtOpeningImages||!window.jtOpeningImages.ready()||!page||!page.classList.contains('is-visible'))return;
     var desktopState=document.getElementById('app-none');
     var mailState=document.getElementById('mail-default');
     var wechatState=document.getElementById('wechat-none');
@@ -1463,6 +1467,7 @@ header.jtgov-head .jtgov-topline{height:46px;min-height:46px}
   if(start)start.addEventListener('click',beginGame,false);
   document.addEventListener('DOMContentLoaded',scheduleReady,false);
   window.addEventListener('jt:game-restored',scheduleReady,false);
+  window.addEventListener('jt:images-ready',scheduleReady,false);
   if(document.readyState!=='loading')scheduleReady();
 })();
 </script>
@@ -5811,6 +5816,7 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     try{if(sessionStorage.getItem(key)==='1')return true;}catch(e){}
     return (window.name||'').split('|').indexOf(key+'=1')!==-1;
   }
+  function notify(){window.dispatchEvent(new CustomEvent('jt:mail-images-changed'));}
   function clearTimers(r){
     if(r.slowTimer!==null)clearTimeout(r.slowTimer);
     if(r.stopTimer!==null)clearTimeout(r.stopTimer);
@@ -5832,14 +5838,14 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     r.state='error';cancelRequest(r);active--;
     r.picture.setAttribute('data-jt-image-state','error');
     message(r,'图片暂未加载成功，可以重试。',true);
-    pump();
+    notify();pump();
   }
   function loaded(r){
     if(r.state!=='loading'||!matching(r)||!r.img.complete||r.img.naturalWidth===0)return;
     r.state='loaded';clearTimers(r);active--;
     r.picture.setAttribute('data-jt-image-state','loaded');
     r.status.hidden=true;r.retry.hidden=true;
-    pump();
+    notify();pump();
   }
   function request(r,original){
     clearTimers(r);r.original=original;
@@ -5847,6 +5853,7 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     r.expected=new URL(url,document.baseURI).href;
     r.fallbackExpected=new URL(r.originalUrl+(r.retryToken?'?jt-image-retry='+r.retryToken:''),document.baseURI).href;
     r.picture.setAttribute('data-jt-image-state','loading');
+    notify();
     message(r,original?'正在重试图片…':'图片加载中…',false);
     r.img.setAttribute('loading','eager');
     r.img.setAttribute('fetchpriority',r.priority>=100?'high':'low');
@@ -5919,6 +5926,11 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
       message(r,'图片等待加载…',false);pump();
     });
   });
+  window.jtMailImages={
+    preloadAll:function(){ready=true;records.forEach(function(r){enqueue(r,30);});pump();notify();},
+    status:function(){return {total:records.length,loaded:records.filter(function(r){return r.state==='loaded'&&r.img.complete&&r.img.naturalWidth>0;}).length,failed:records.filter(function(r){return r.state==='error';}).length};},
+    retryFailed:function(){records.forEach(function(r){if(r.state==='error'){r.retryToken=String(Date.now());r.state='queued';r.priority=200;message(r,'图片等待加载…',false);}});pump();notify();}
+  };
   document.addEventListener('DOMContentLoaded',function(){ready=true;refresh();});
   window.addEventListener('jt:game-restored',function(){ready=true;refresh();});
   ['hashchange','jt:notebook-mail-opened','jt:notebook-pages-opened','jt:lts-blog-login-success','pageshow'].forEach(function(name){window.addEventListener(name,scheduleRefresh);});
@@ -5932,6 +5944,108 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
 .te-menu-actions button{font-family:inherit;cursor:pointer;line-height:inherit}
 .te-restart-note{text-align:center;color:#786784;font-size:12px;line-height:1.7;margin:14px 0 0}
 </style>
+<script id="jt-opening-image-preloader">
+(function(){
+  'use strict';
+  var page=document.getElementById('gameOpeningPage');
+  var start=document.getElementById('gameOpeningStart');
+  var status=document.getElementById('gameOpeningStatus');
+  var retry=document.getElementById('gameOpeningRetry');
+  var groups=[],byUrl={},active=0,started=false,renderPending=false,lastReady=false,slow=false;
+  var backgrounds=["assets/image-7d281d1b3f4877c1de0411664c613cad09d0152b48d8bf751dbb8dfb151f3eec.jpg", "assets/image-afbea82b863af89cfb4249db9da32d6681d282d0a47d9f71e3b3d4750f73c5eb.png", "assets/image-2c11d93f2a7ec6cf2412175c07aa67ac414b157405cee73e2c76ef1887f4461d.png", "assets/image-e4520d7f97f54af7bf0b88966111f0b97aa0746f1503dfa7fd84aea85a9879d3.png", "assets/image-303849cae1d9cfd3f9ad6f0d652e3e60efbce579373850230bc7d987833df0cd.jpg", "assets/image-8cedfe43a19ed6116e2aebbe7fd34405fb14d0204cbc41821ac6e54be48cd8a0.jpg", "assets/image-d4b1fb9b233f4554e5891807ec48d9f3de963e4895ffbd79bc9073e6c94799b3.jpg", "assets/image-3cb5811e45b2e9dca20a16c160eafd097b9bb0ff202cab36552b67aeb77917e2.jpg"];
+  function mailState(){return window.jtMailImages?window.jtMailImages.status():{total:7,loaded:0,failed:0};}
+  function complete(group){return group.images.every(function(img){return img.complete&&img.naturalWidth>0;});}
+  function allReady(){return started&&groups.every(function(g){return g.state==='loaded'&&complete(g);})&&mailState().loaded===7;}
+  function publish(){
+    renderPending=false;
+    var mail=mailState(),done=mail.loaded,failed=mail.failed;
+    groups.forEach(function(g){if(g.state==='loaded'&&complete(g))done++;if(g.state==='error')failed++;});
+    var total=groups.length+mail.total,ok=allReady();
+    if(page&&page.classList.contains('is-visible')){
+      if(status)status.textContent=ok?'全部图片已准备完成，请点击上方按钮进入游戏。':failed?'图片已准备 '+done+' / '+total+'；有 '+failed+' 项暂未成功，请点击下方按钮重试。':(slow?'网络较慢，正在继续加载图片：':'正在加载游戏图片：')+done+' / '+total+'。你可以先阅读开场介绍。';
+      if(retry)retry.hidden=!failed;
+      if(start&&!ok){start.disabled=true;start.textContent='正在准备游戏图片…';}
+      page.setAttribute('aria-busy',ok?'false':'true');
+    }
+    if(ok!==lastReady){lastReady=ok;window.dispatchEvent(new CustomEvent('jt:images-ready'));}
+  }
+  function schedulePublish(){if(!renderPending){renderPending=true;requestAnimationFrame(publish);}}
+  function clearTimers(g){
+    if(g.stopTimer!==null)clearTimeout(g.stopTimer);
+    if(g.retryTimer!==null)clearTimeout(g.retryTimer);
+    g.stopTimer=g.retryTimer=null;
+  }
+  function finish(g){
+    if(g.state==='loaded'||!complete(g))return;
+    if(g.state==='loading')active--;
+    clearTimers(g);g.state='loaded';
+    g.images.forEach(function(img){img.removeAttribute('data-jt-preload-owner');});
+    schedulePublish();pump();
+  }
+  function fail(g){
+    if(g.state!=='loading')return;
+    active--;clearTimers(g);g.state='error';
+    /* Cancel outstanding image requests before making their queue slot available. */
+    g.images.forEach(function(img){if(!img.complete)img.removeAttribute('src');});
+    if(g.attempts<2){g.retryTimer=setTimeout(function(){g.retryTimer=null;if(g.state==='error'){g.state='queued';pump();schedulePublish();}},1200);}
+    schedulePublish();pump();
+  }
+  function changed(g){
+    if(g.state==='loaded'&&!complete(g)){g.state='error';schedulePublish();}
+    if(complete(g)){finish(g);return;}
+    if(g.state==='loading'&&g.images.some(function(img){return img.getAttribute('src')&&img.complete&&img.naturalWidth===0;}))fail(g);
+  }
+  function request(g){
+    clearTimers(g);g.state='loading';g.attempts++;active++;
+    g.images.forEach(function(img){
+      if(img.complete&&img.naturalWidth>0)return;
+      img.setAttribute('data-jt-preload-owner','1');
+      img.setAttribute('loading','eager');
+      img.setAttribute('decoding','async');
+      if(!img.closest||!img.closest('#gameOpeningPage'))img.setAttribute('fetchpriority','low');
+      if(g.attempts>1||!img.getAttribute('src')||(img.complete&&img.naturalWidth===0)){img.removeAttribute('src');img.setAttribute('src',g.url);}
+    });
+    g.stopTimer=setTimeout(function(){fail(g);},45000);
+    setTimeout(function(){changed(g);},0);
+  }
+  function pump(){
+    if(!started)return;
+    for(var i=0;i<groups.length&&active<3;i++){if(groups[i].state==='queued')request(groups[i]);}
+  }
+  function add(url,img){
+    if(!url||url.indexOf('assets/')!==0)return;
+    var g=byUrl[url];
+    if(!g){g={url:url,images:[],state:'queued',attempts:0,stopTimer:null,retryTimer:null};byUrl[url]=g;groups.push(g);}
+    if(img){g.images.push(img);img.addEventListener('load',function(){changed(g);});img.addEventListener('error',function(){changed(g);});}
+  }
+  function init(){
+    if(started||document.readyState==='loading'||!window.jtMailImages)return;
+    if(window.jtGameSave&&(window.jtGameSave.restoring||window.jtGameSave.restoreError))return;
+    document.querySelectorAll('img').forEach(function(img){
+      if(!img.hasAttribute('data-jt-mail-image'))add(img.getAttribute('data-jt-original-src')||img.getAttribute('src'),img);
+    });
+    backgrounds.forEach(function(url){if(!byUrl[url])add(url,new Image());});
+    groups.forEach(function(g){if(complete(g))g.state='loaded';else g.images.forEach(function(img){img.setAttribute('data-jt-preload-owner','1');});});
+    started=true;
+    window.jtMailImages.preloadAll();
+    pump();publish();
+    setTimeout(function(){if(!allReady()){slow=true;schedulePublish();}},15000);
+  }
+  function retryFailed(){
+    groups.forEach(function(g){if(g.state==='error'){clearTimers(g);g.state='queued';g.attempts=0;g.images.forEach(function(img){if(!(img.complete&&img.naturalWidth>0))img.removeAttribute('src');});}});
+    if(window.jtMailImages)window.jtMailImages.retryFailed();
+    pump();schedulePublish();
+  }
+  window.jtOpeningImages={ready:allReady,retryFailed:retryFailed};
+  if(retry)retry.addEventListener('click',retryFailed);
+  window.addEventListener('jt:mail-images-changed',schedulePublish);
+  window.addEventListener('online',retryFailed);
+  window.addEventListener('jt:game-restored',init);
+  document.addEventListener('DOMContentLoaded',init);
+  if(document.readyState!=='loading')init();
+})();
+
+</script>
 <script id="jt-game-save-ui">
 (function(){
   'use strict';
