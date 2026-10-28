@@ -49,7 +49,7 @@ img[data-jt-image-error]{cursor:pointer;outline:1px dashed #8a99a6;outline-offse
 <script id="jt-game-save-bootstrap">
 (function(){
   'use strict';
-  var KEY='jt_game_save_v1', getters={}, pending=null, stopped=false;
+  var KEY='jt_game_save_v1', getters={}, pending=null, idleSave=null, dirtySince=null, lastPayload=null, stopped=false;
   function read(storage,key){try{return storage.getItem(key);}catch(e){return null;}}
   function parse(value){
     try{
@@ -145,33 +145,59 @@ img[data-jt-image-error]{cursor:pointer;outline:1px dashed #8a99a6;outline-offse
       try{history.replaceState(history.state,'',location.pathname+location.search+saved.hash);}catch(e){}
     }
   }
+  function cancelPendingSave(){
+    if(pending!==null){clearTimeout(pending);pending=null;}
+    if(idleSave!==null){window.cancelIdleCallback(idleSave);idleSave=null;}
+  }
+  function queueSave(){
+    if(stopped||api.restoring||!api.capture)return;
+    if(dirtySince===null)dirtySince=Date.now();
+    /* Once the deadline is reached, later events cannot keep canceling the idle timeout. */
+    if(idleSave!==null&&Date.now()-dirtySince>=1500)return;
+    cancelPendingSave();
+    /* Let navigation paint first. Coalesce bursts, but keep a bounded save delay. */
+    var delay=Math.max(0,Math.min(300,1500-(Date.now()-dirtySince)));
+    pending=setTimeout(function(){
+      pending=null;
+      if(window.requestIdleCallback&&window.cancelIdleCallback){
+        idleSave=window.requestIdleCallback(function(){idleSave=null;api.save();},{timeout:500});
+      }else api.save();
+    },delay);
+  }
   var api=window.jtGameSave={
     finishBoot:finishBoot,
     restoring:!!saved,
     snapshot:saved,
     getState:function(name){return saved&&saved.logic&&saved.logic[name]||null;},
     register:function(name,getter){getters[name]=getter;},
-    saveSoon:function(){if(stopped||api.restoring||!api.capture)return;if(pending!==null)return;pending=setTimeout(function(){pending=null;api.save();},160);},
-    save:function(){
+    saveSoon:queueSave,
+    save:function(finalCapture){
       if(stopped||api.restoring||!api.capture)return false;
-      if(pending!==null){clearTimeout(pending);pending=null;}
+      cancelPendingSave();dirtySince=null;
       var logic={};Object.keys(getters).forEach(function(name){try{logic[name]=getters[name]();}catch(e){}});
-      var snapshot={version:1,savedAt:Date.now(),hash:location.hash,story:story(),logic:logic,ui:api.capture()};
-      var text;try{text=JSON.stringify(snapshot);}catch(e){return false;}
-      var ok=false;eachStore(function(storage){storage.setItem(KEY,text);ok=true;});
-      api.lastSaveSucceeded=ok;return ok;
+      var snapshot={version:1,hash:location.hash,story:story(),logic:logic,ui:api.capture(finalCapture===true)};
+      var payload,text;
+      try{
+        payload=JSON.stringify(snapshot);
+        if(payload===lastPayload)return api.lastSaveSucceeded;
+        snapshot.savedAt=Date.now();text=JSON.stringify(snapshot);
+      }catch(e){return false;}
+      var writes=0;eachStore(function(storage){storage.setItem(KEY,text);writes++;});
+      /* Retry a failed store on the next save; never treat a partial write as synchronized. */
+      lastPayload=writes===2?payload:null;
+      api.lastSaveSucceeded=writes>0;return api.lastSaveSucceeded;
     },
     restart:function(){
       if(!window.confirm('确定要清空当前游戏进度，从头开始吗？\n普通刷新不会清空进度。此操作无法撤销。'))return false;
       stopped=true;
-      if(pending!==null){clearTimeout(pending);pending=null;}
+      cancelPendingSave();dirtySince=null;
       clearStory();eachStore(function(storage){storage.removeItem(KEY);});
       try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
       location.reload();return true;
     }
   };
-  window.addEventListener('pagehide',function(){api.save();},false);
-  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')api.save();},false);
+  window.addEventListener('pagehide',function(){api.save(true);},false);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')api.save(true);},false);
 })();
 </script>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
@@ -5792,6 +5818,10 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
   .desktop>.window,#ltsDesktop>.lts-appwindow,.lts-unlocked-window,.lts-file-docwin,.lts-album-window{bottom:8px}
   #browserWindow .browserbody,#ltsGenericBrowser .lts-browser-page{padding-top:24px}
 }
+/* Reserve a separate row for desktop return links, above window close controls. */
+.desktop>#luoxinReturnLts:not([hidden])~.window{top:96px}
+#ltsDesktop>.lts-appwindow{top:96px!important}
+@media(min-width:901px){#ltsFilesUnlocked>.lts-unlocked-window{top:96px}}
 </style>
 
 <style id="jt-mail-image-loading-style">
@@ -5902,7 +5932,11 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
     }
     pump();
   }
-  function scheduleRefresh(){if(refreshTimer===null)refreshTimer=setTimeout(refresh,0);}
+  function scheduleRefresh(){
+    /* Once preloading is complete, ordinary clicks need no image checks or layout reads. */
+    if(records.length&&records.every(function(r){return r.state==='loaded';}))return;
+    if(refreshTimer===null)refreshTimer=setTimeout(refresh,0);
+  }
 
   document.querySelectorAll('#ptianchennote picture, #ptianchenpages picture').forEach(function(picture,index){
     var img=picture.querySelector('img'),source=picture.querySelector('source');
@@ -6056,21 +6090,32 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
   var panels=Array.prototype.slice.call(document.querySelectorAll('#gameOpeningPage,#mailWindow,#mailWindow .mailpage,#storyMailPopup,#yangMailToast,#yangChoiceToast,#badEndingScreen,#beNewsToast,#beEasterNews,#jgaYangLuNoteContent,#jgaYangLuNoteError'));
   var links=Array.prototype.slice.call(document.querySelectorAll('#mudanZhang .mudan-back,#mudanLTSRecord .mudan-back'));
   var scrollables=Array.prototype.slice.call(document.querySelectorAll('[id],.mailview,.mails,.messages,.lts-wx-scroll,.lts-mail-scroll,.lts-album-body,.lts-file-paper,.jtcode-wrap,.mudan-wrap,.admin-main,.lts-browser-page,.sidebar,.chats,.browserbody'));
+  var keyCache=typeof WeakMap==='function'?new WeakMap():null, scrollTargets={};
   function key(el){
+    var original=el,cached=keyCache&&keyCache.get(el);if(cached!==undefined&&cached!==null)return cached;
     var path=[];
     while(el&&el!==document.body&&!el.id){var parent=el.parentElement;if(!parent)return '';path.unshift(Array.prototype.indexOf.call(parent.children,el));el=parent;}
-    return (el&&el.id||'')+'|'+path.join('.');
+    var result=(el&&el.id||'')+'|'+path.join('.');
+    if(keyCache&&original)keyCache.set(original,result);
+    return result;
   }
   var nodes={};controls.concat(details,panels,links,scrollables).forEach(function(el){nodes[key(el)]=el;});
   function gatherControls(){return controls.filter(function(el){return el.type!=='file';}).map(function(el){return {key:key(el),tag:el.tagName,type:el.type,value:el.value,checked:!!el.checked};});}
   function gatherPanels(){return panels.map(function(el){return {key:key(el),show:el.classList.contains('show'),opening:el.classList.contains('is-visible'),display:el.style.display,aria:el.getAttribute('aria-hidden')};});}
-  function collectScroll(){
-    scrollables.forEach(function(el){if(el.clientHeight>0&&el.scrollHeight>el.clientHeight&&(!scrollRecovery||!scrollPositions[key(el)])){scrollPositions[key(el)]={top:el.scrollTop,left:el.scrollLeft};}});
+  function rememberScroll(el,k){
+    if(el.clientHeight>0&&(!scrollRecovery||!scrollPositions[k]))scrollPositions[k]={top:el.scrollTop,left:el.scrollLeft};
+  }
+  function collectScroll(finalCapture){
+    /* Only visit containers that actually scrolled, not every ID in the game.
+       Re-read tracked positions to catch a programmatic reset before its scroll event. */
+    Object.keys(scrollTargets).forEach(function(k){rememberScroll(scrollTargets[k],k);});
+    /* On leaving only, preserve even a first programmatic scroll whose event has not fired. */
+    if(finalCapture)scrollables.forEach(function(el){if(el.clientHeight>0&&el.scrollHeight>el.clientHeight)rememberScroll(el,key(el));});
     return scrollPositions;
   }
-  api.capture=function(){
+  api.capture=function(finalCapture){
     return {
-      controls:gatherControls(),panels:gatherPanels(),scroll:collectScroll(),
+      controls:gatherControls(),panels:gatherPanels(),scroll:collectScroll(finalCapture),
       details:details.map(function(el){return {key:key(el),open:el.open};}),
       links:links.map(function(el){return {key:key(el),href:el.getAttribute('href'),text:el.textContent};}),
       unread:['mailItemNotebookPages','mailItemYangThreat'].filter(function(id){var el=document.getElementById(id);return el&&el.classList.contains('tc-newmail-unread');}),
@@ -6106,6 +6151,7 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
         applyRecords(ui.links,function(s){var el=nodes[s.key];if(el&&/^#[A-Za-z][\w-]*$/.test(s.href)){el.setAttribute('href',s.href);el.textContent=String(s.text||'');}});
         ['mailItemNotebookPages','mailItemYangThreat'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('tc-newmail-unread',ui.unread.indexOf(id)>=0);});
         scrollPositions=ui.scroll;
+        Object.keys(scrollPositions).forEach(function(k){if(nodes[k])scrollTargets[k]=nodes[k];});
         /* Regenerate trusted search results; never restore arbitrary HTML from storage. */
         var input=document.getElementById('adminSearchInput'),form=input&&input.closest('form');
         if(ui.adminResult&&input&&input.value&&form){form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));}
@@ -6127,8 +6173,16 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
   }
   function userMoved(){scrollRecovery=false;}
   ['pointerdown','touchstart','wheel','keydown'].forEach(function(name){document.addEventListener(name,userMoved,{passive:true,capture:true});});
-  document.addEventListener('load',function(e){if(e.target&&e.target.tagName==='IMG'&&scrollRecovery)requestAnimationFrame(applyScroll);},true);
-  document.addEventListener('scroll',function(e){if(e.target&&e.target.nodeType===1&&e.target.clientHeight>0&&(!scrollRecovery||!scrollPositions[key(e.target)])){scrollPositions[key(e.target)]={top:e.target.scrollTop,left:e.target.scrollLeft};}api.saveSoon();},{passive:true,capture:true});
+  var scrollRestorePending=false;
+  document.addEventListener('load',function(e){
+    if(!e.target||e.target.tagName!=='IMG'||!scrollRecovery||scrollRestorePending)return;
+    scrollRestorePending=true;
+    requestAnimationFrame(function(){scrollRestorePending=false;applyScroll();});
+  },true);
+  document.addEventListener('scroll',function(e){
+    var el=e.target;
+    if(el&&el.nodeType===1){var k=key(el);if(nodes[k]===el){scrollTargets[k]=el;rememberScroll(el,k);api.saveSoon();}}
+  },{passive:true,capture:true});
   ['input','change','click','toggle'].forEach(function(name){document.addEventListener(name,function(){api.saveSoon();},true);});
   window.addEventListener('hashchange',function(){scrollRecovery=false;api.saveSoon();},false);
   window.addEventListener('pageshow',function(e){if(!e.persisted){restore();requestAnimationFrame(applyScroll);}api.saveSoon();},false);
