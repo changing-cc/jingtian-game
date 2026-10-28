@@ -5818,6 +5818,10 @@ html[data-jt-device="tablet"]{--jt-icon:64px;--jt-dock-icon:54px;--jt-body:16px;
   .desktop>.window,#ltsDesktop>.lts-appwindow,.lts-unlocked-window,.lts-file-docwin,.lts-album-window{bottom:8px}
   #browserWindow .browserbody,#ltsGenericBrowser .lts-browser-page{padding-top:24px}
 }
+/* Reserve a separate row for desktop return links, above window close controls. */
+.desktop>#luoxinReturnLts:not([hidden])~.window{top:96px}
+#ltsDesktop>.lts-appwindow{top:96px!important}
+@media(min-width:901px){#ltsFilesUnlocked>.lts-unlocked-window{top:96px}}
 </style>
 
 <style id="jt-mail-image-loading-style">
